@@ -1,0 +1,151 @@
+/* CSS for VoFXBlock */
+
+.vof_block .count {
+    font-weight: bold;
+}
+
+/*
+.vof_block p {
+    cursor: pointer;
+}
+*/
+
+.vof_block .action .check {
+    height: 40px;
+    vertical-align: middle;
+    border-color: #0075b4;
+    background: #0075b4;
+    color: #fcfcfc;
+    font-size: 16px;
+    text-shadow: none;
+    box-shadow: none;
+    border-width: 1px;
+    border-radius: 0.1875rem;
+    width: auto;
+    height: auto;
+    padding: 0.625rem 1.25rem;
+    font-weight: normal;
+    text-shadow: none;
+    text-transform: capitalize;
+    cursor: pointer;
+  }
+  
+.vof_block .action .check:hover {
+    background-color: #065683;
+ }
+
+ .vof_block .action .check[disabled=disabled], .vof_block .action .check:disabled {
+    border-color: #d2d0d0;
+    background: #f2f3f3;
+    color: #676666;
+    cursor:auto;
+    border-style: solid;
+}
+
+/* escondo radio buttons */
+.vof_block .radiovof{
+    display:none;
+}
+
+.vof_block .submission-feedback{
+    padding: 10px;
+    color: #5e5e5e;
+    font-size: 0.9em;
+}
+
+.vof_block .notificacion.correcto.lineaarriba{
+    border-top: 3px solid #008100;
+}
+
+.vof_block .notificacion.incorrecto.lineaarriba{
+    border-top: 3px solid #b20610;;
+}
+
+.vof_block .notificacion{
+    margin-top: 10px;
+    padding: 8px 10px 4px 10px;
+}
+
+.vof_block .notificacion img{
+    width: 16px;
+    margin-right: 14px;
+}
+
+.vof_block .action{
+    margin-top: 20px;
+    padding-bottom: 20px;
+}
+
+.vof_block .ver_respuesta{
+    float:right;
+    font-size:14px;
+    cursor: pointer;
+    border: none;
+    color: #0066a2;
+    background-color: transparent;
+    background-image: none;
+    padding: 10px;
+    font-weight: 400;
+}
+
+.vof_block .ver_respuesta:hover{
+    border: 1px solid;
+    border-color: #0075b4;
+    border-radius: 3px;
+    background-image: none;
+    background-color: transparent;
+    font-weight: 400;
+}
+
+/*CSS Tabla*/
+
+.tablagrande {
+    display: table;
+    background-color: #a0a0a0;
+    border-radius: 11px;
+    border-spacing: 1px;
+    line-height: 1.2;
+    margin: auto;
+}
+.tablagrande .botonResponderchico{margin: 0;}
+.tablagrande [class^=dtrow]{display: table-row;color:#727277; }
+.tablagrande [class^=dtcell]{display: table-cell;text-align: left;vertical-align: middle;background-color: #fff;box-sizing: border-box;padding: 10px 25px;position: relative;}
+.tablagrande .dtrowh [class^=dtcell]{padding: 10px 25px; }
+.tablagrande .dtcell1{width: 500px;}
+.tablagrande .dtcell2{width: 80px;}
+.tablagrande .dtcell3{width: 80px;}
+.tablagrande .dtcell4{width: 150px;}
+.tablagrande .dtcell8 .respfrac{left: 120px;top:53px;}
+.tablagrande [class^=dtrow]:first-child [class^=dtcell1]:first-child{border-radius: 10px 0 0 0;}
+.tablagrande [class^=dtrow]:first-child [class^=dtcell2]:last-child{border-radius: 0 11px 0 0;}
+.tablagrande [class^=dtrow]:last-child [class^=dtcell1]:first-child{border-radius: 0 0 0 11px;}
+.tablagrande [class^=dtrow]:last-child [class^=dtcell2]:last-child{border-radius: 0 0 11px 0;}
+.tablagrande [class^=dtrow]:only-child [class^=dtcell1]:first-child{border-radius: 10px 0 0 11px;}
+.tablagrande [class^=dtrow]:only-child [class^=dtcell2]:last-child{border-radius: 0 11px 11px 0;}
+.opcV { 
+    background-color: #868686;
+    cursor: pointer;
+    border-radius: 30px;
+    text-align: center;
+    padding: 5px;
+    font-weight: 900;
+    font-size: 16px;
+    color: white;
+}
+.opcF { 
+    background-color: #868686;
+    cursor: pointer;
+    border-radius: 30px;
+    text-align: center;
+    padding: 5px;
+    font-weight: 900;
+    font-size: 16px;
+    color: white;
+}
+
+.selv {background-color: #69b42c;}
+.self {background-color: #ea6c00;}
+
+.cuadroverde{
+    outline: solid 2px #268800;
+}

@@ -1,0 +1,62 @@
+{% load i18n %}
+<div class="vof_block">
+  <h3 class="vof-header">{{ display_name }}</h3>
+  <div class="status" id="status_{{ location }}">
+  </div>
+    <div class="tablagrande" id="vftable2">
+      {% for key, value in preguntas %}
+                    <div class="dtrow">
+                        <div class="dtcell1">{{value.enunciado}}</div>
+                        <div class="dtcell3">
+                            <div class="opcV opcV{{key}} opcion">
+                            {{ texto_verdadero }}<input type="radio" class="radiovof" pregunta-id="{{ key }}" name="{{ key }}_{{ location }}" value="verdadero"/>
+                          </div>
+                        </div>
+                        <div class="dtcell2">
+                            <div class="opcF opcF{{key}} opcion">
+                            {{ texto_falso }}<input type="radio" class="radiovof" pregunta-id="{{ key }}" name="{{ key }}_{{ location }}" value="falso"/>
+                          </div>
+                        </div>
+                    </div>
+                  <!--
+                  <p>{{value.enunciado}}</p>
+                  {{ texto_verdadero }}<input type="radio" class="radiovof" name="{{ key }}" value="verdadero"/>
+                  {{ texto_falso }}<input type="radio" class="radiovof" name="{{ key }}" value="falso"/>
+                  -->
+      {% endfor %}
+    </div>
+  <div class="divrespuestas">
+      {% for key, value in respuestas.items %}
+        {% if value != 'nada'%}
+        <input type="hidden" class="lasrespuestas" respuesta-id={{key}} value="{{value}}">
+        {% endif %}
+      {% endfor %}
+  </div>
+  <div class="elticket">
+    {%if respondido%}
+      {%if score >= 1%}
+        <img src="https://static.sumaysigue.uchile.cl/cmmeduformacion/produccion/assets/img/correct-icon.png"/>
+      {% else %}
+        <img src="https://static.sumaysigue.uchile.cl/cmmeduformacion/produccion/assets/img/incorrect-icon.png"/>
+      {%endif%}
+    {% endif%}
+  </div>
+  <div class="action">
+            {% if no_mas_intentos or preguntas|length == 0 %}
+              <button class="check Submit" data-checking="Enviando..." data-value="Enviar" aria-describedby="submission_feedback_{{ location }}" disabled="disabled">
+            {% else %}
+              <button class="check Submit" data-checking="Enviando..." data-value="Enviar" aria-describedby="submission_feedback_{{ location }}">
+            {% endif %}
+                <span>Enviar</span>
+              </button>
+              <span id="submission_feedback_{{ location }}" class="submission-feedback">
+                {{texto_intentos}}
+              </span>
+              <button class="ver_respuesta" data-checking="Cargando..." data-value="Ver Respuesta">
+                <img src="https://static.sumaysigue.uchile.cl/cmmeduformacion/produccion/assets/img/info-icon.png"/></br>
+                <span>Ver Respuesta</span>
+              </button>
+  </div>
+      <div class="notificacion" tabindex="-1">
+      </div>
+</div>

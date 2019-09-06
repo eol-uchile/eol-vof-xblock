@@ -1,0 +1,75 @@
+<div class="wrapper-comp-settings is-active editor-with-buttons" id="settings-tab">
+  <ul class="list-input settings-list">
+    <li class="field comp-setting-entry is-set">
+      <div class="wrapper-comp-setting">
+        <label class="label setting-label" for="display_name">Display Name</label>
+        <input class="input setting-input" name="display_name" id="display_name" value="{{display_name}}" type="text" />
+      </div>
+    </li>
+    <li class="field comp-setting-entry is-set">
+      <div class="wrapper-comp-setting">
+        <label class="label setting-label" for="texto_verdadero">Texto Verdadero</label>
+        <input class="input setting-input" name="texto_verdadero" id="texto_verdadero" value="{{texto_verdadero}}" type="text" />
+      </div>
+    </li>
+    <li class="field comp-setting-entry is-set">
+      <div class="wrapper-comp-setting">
+        <label class="label setting-label" for="texto_falso">Texto Falso</label>
+        <input class="input setting-input" name="texto_falso" id="texto_falso" value="{{texto_falso}}" type="text" />
+      </div>
+    </li>
+    <li class="field comp-setting-entry is-set">
+      <div class="wrapper-comp-setting">
+        <label class="label setting-label" for="weight">Peso</label>
+        <input class="input setting-input" name="weight" id="weight" value="{{weight}}" type="text" />
+      </div>
+    </li>
+    <li class="field comp-setting-entry is-set">
+      <div class="wrapper-comp-setting">
+        <label class="label setting-label" for="nro_de_intentos">Nro. de Intentos</label>
+        <input class="input setting-input" name="nro_de_intentos" id="nro_de_intentos" value="{{nro_de_intentos}}" type="text" />
+      </div>
+    </li>
+    <li class="field comp-setting-entry is-set" id="listapreguntas">
+      {% for key, value in preguntas %}
+        <div class="div-pregunta-{{key}}">
+          <div class="wrapper-comp-setting">
+            <label class="label setting-label" for="pregunta">Pregunta</label>
+            <input class="input setting-input" name="pregunta" pregunta-id="{{key}}" value="{{value.enunciado}}" type="text" />
+          </div>
+          <div class="wrapper-comp-setting">
+              <label class="label setting-label" for="valor">Valor</label>
+              <select name="valor" valor-id="{{key}}">
+                {% if value.valor %}
+                  <option value="V" selected>Verdadero</option>
+                  <option value="F">Falso</option>
+                {% else %}
+                  <option value="V">Verdadero</option>
+                  <option value="F" selected>Falso</option>
+                {% endif %}
+              </select>
+          </div>
+          <div class="action-item">
+            <a href="#" borrar-id="{{key}}" class="button action-primary borrar-button">Borrar</a>
+          </div>
+        </div>
+      {% endfor %}
+    </li>
+    <li>
+      {{location}}
+    </li>
+  </ul>
+  <div class="xblock-actions">
+    <ul>
+      <li class="action-item">
+        <a href="#" class="button action-primary save-button">Save</a>
+      </li>
+      <li class="action-item">
+        <a href="#" class="button cancel-button">Cancel</a>
+      </li>
+      <li class="action-item">
+          <a href="#" class="button add-button">Agregar otra pregunta</a>
+      </li>
+    </ul>
+  </div>
+</div>
