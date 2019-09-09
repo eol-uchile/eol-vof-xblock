@@ -8,6 +8,7 @@ function VoFXBlock(runtime, element) {
     var botonesVoF = $element.find('.opcion');
     var lasRespuestas = $element.find('.lasrespuestas');
     var subFeedback = $element.find('.submission-feedback');
+    var statusDiv = $element.find('.status');
 
     function updateText(result) {
     //actualizo el texto de correcto o incorrecto y desactivo el boton si es que se supero el nro de intentos
@@ -29,6 +30,11 @@ function VoFXBlock(runtime, element) {
             $element.find('.notificacion.incorrecto').html('<img src="https://static.sumaysigue.uchile.cl/cmmeduformacion/produccion/assets/img/incorrect-icon.png"/>'+result.texto);
             $element.find('.elticket').html('<img src="https://static.sumaysigue.uchile.cl/cmmeduformacion/produccion/assets/img/incorrect-icon.png"/>');
         }
+
+        statusDiv.removeClass('correct');
+        statusDiv.removeClass('incorrect');
+        statusDiv.removeClass('unanswered');
+        statusDiv.addClass(result.indicator_class);
 
         if(result.nro_de_intentos > 0){
             subFeedback.text('Has realizado '+result.intentos+' de '+result.nro_de_intentos+' intentos');

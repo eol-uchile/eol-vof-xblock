@@ -133,7 +133,7 @@ class VoFXBlock(XBlock):
         """
         Vista estudiante
         """
-        #Tuve que pasar las preguntas a una lista para ordenarlas
+        #Tuve que pasar las preguntas a una lista para ordenarlas, TO DO: pasar a listas o ver que es mas eficiente
         lista_pregs = [ [k,v] for k, v in self.preguntas.items() ]
         lista_pregs = sorted(lista_pregs, key=lambda x: int(x[0]))
 
@@ -144,6 +144,9 @@ class VoFXBlock(XBlock):
             texto_intentos = "Has realizado "+str(self.intentos)+" de "+str(self.max_attempts)+" intentos"
             if self.intentos >= self.max_attempts:
                 no_mas_intentos = True
+
+        #status respuesta
+        indicator_class = self.get_indicator_class()
 
         context.update(
             {
@@ -158,11 +161,12 @@ class VoFXBlock(XBlock):
                 'no_mas_intentos': no_mas_intentos,
                 'score': self.score,
                 'respondido': self.respondido,
+                'indicator_class': indicator_class,
                 'location': unicode(self.location).split('@')[-1]
             }
         )
         template = loader.render_django_template(
-            'static/html/vof.html',
+            'public/html/vof.html',
             context=Context(context),
             i18n_service=self.runtime.service(self, 'i18n'),
         )
@@ -170,10 +174,10 @@ class VoFXBlock(XBlock):
             template,
             initialize_js_func='VoFXBlock',
             additional_css=[
-                'public/vof.css',
+                'public/css/vof.css',
             ],
             additional_js=[
-                'public/vof.js',
+                'public/js/vof.js',
             ],
         )
         return frag
@@ -198,7 +202,7 @@ class VoFXBlock(XBlock):
             }
         )
         template = loader.render_django_template(
-            'static/html/vof_studio.html',
+            'public/html/vof_studio.html',
             context=Context(context),
             i18n_service=self.runtime.service(self, 'i18n'),
         )
@@ -206,7 +210,7 @@ class VoFXBlock(XBlock):
             template,
             initialize_js_func='VoFEditBlock',
             additional_js=[
-                'public/vof_studio.js',
+                'public/js/vof_studio.js',
             ],
         )    
         return frag
@@ -219,17 +223,11 @@ class VoFXBlock(XBlock):
         """
         Responder el V o F
         """
-        print("llego con estas respuestas")
-        print(self.respuestas)
-        print("y ahora mandé estas")
-        print(data['respuestas'])
         nuevas_resps = {}
         texto = self.texto_correcto
         buenas = 0.0
         malas = 0.0
-        print(self.preguntas)
         total = len(self.preguntas)
-        print(total)
         for e in data['respuestas']:
             #WARNING: No sé por qué esto llega como string y se guarda como string en el studio_submit
             idpreg = e['name']
@@ -248,19 +246,13 @@ class VoFXBlock(XBlock):
             else:
                 buenas+=1
             
-        print("malas :"+str(malas))
         malas = (total-buenas)
-        print("malas :"+str(malas)+" buenas: "+str(buenas)+"total: "+str(total))
         if malas > 0:
             texto = self.texto_incorrecto
 
-        print('nuevas resp')
-        print(nuevas_resps)
         #si no llego nada no lo actualizo
         if nuevas_resps:
             self.respuestas = nuevas_resps
-
-        self.respondido = True
 
         #puntaje - falta peso
         self.score = float(buenas/(malas+buenas))
@@ -276,7 +268,14 @@ class VoFXBlock(XBlock):
             self.intentos += 1
         except IntegrityError:
             pass
-        return {'texto':texto,'score':self.score, 'nro_de_intentos': self.max_attempts, 'intentos': self.intentos}
+
+        #ya respondi
+        self.respondido = True
+
+        #status respuesta
+        indicator_class = self.get_indicator_class()
+
+        return {'texto':texto,'score':self.score, 'nro_de_intentos': self.max_attempts, 'intentos': self.intentos, 'indicator_class':indicator_class}
     
     @XBlock.json_handler
     def mostrar_respuesta(self, data, suffix=''):
@@ -293,15 +292,13 @@ class VoFXBlock(XBlock):
         """
         nuevas_pregs = {}
         pregs = data.get('preguntas')
-        print("nuevas preguntas")
-        print(pregs)
         for p in pregs:
             valor = True
             if p['valor'] == 'F':
                 valor = False
-            #WARNING: Aquí aunque castee a int, queda como string la id, me rendí
+            #WARNING: Aquí aunque castee a int, queda como string la id, me rendi por eso ocupo string
             nuevas_pregs[p['id']] = {'enunciado':p['enunciado'], 'valor': valor}
-        print(nuevas_pregs)
+
         self.display_name = data.get('display_name')
         self.texto_verdadero = data.get('texto_verdadero')
         self.texto_falso = data.get('texto_falso')
@@ -312,6 +309,15 @@ class VoFXBlock(XBlock):
         self.preguntas = nuevas_pregs
     
         return {'result': 'success'}
+
+    def get_indicator_class(self):
+        indicator_class = 'unanswered'
+        if self.respondido and self.intentos:
+            if self.score >= 1:
+                indicator_class = 'correct'
+            else:
+                indicator_class = 'incorrect'
+        return indicator_class
 
     # TO-DO: change this to create the scenarios you'd like to see in the
     # workbench while developing your XBlock.
