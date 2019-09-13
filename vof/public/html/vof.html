@@ -1,9 +1,17 @@
 {% load i18n %}
 <div class="vof_block">
   <h3 class="vof-header">{{ display_name }}</h3>
-  <div class="status {{ indicator_class }}" id="status_{{ location }}">
+  {% if show_ticket %}
+    <div class="status {{ indicator_class }}" id="status_{{ location }}">
+  {% else %}
+    <div class="status " id="status_{{ location }}">
+  {% endif %}
   </div>
-    <div class="tablagrande" id="vftable2">
+    {% if no_mas_intentos or preguntas|length == 0 %}
+      <div class="tablagrande noclick" id="vftable2">
+    {% else %}
+      <div class="tablagrande" id="vftable2">
+    {% endif %}
       {% for key, value in preguntas %}
                     <div class="dtrow">
                         <div class="dtcell1">{{value.enunciado}}</div>
@@ -33,12 +41,16 @@
       {% endfor %}
   </div>
   <div class="elticket">
-    {%if respondido%}
+    {%if respondido and show_ticket%}
       {%if score >= 1%}
-        <img src="https://static.sumaysigue.uchile.cl/cmmeduformacion/produccion/assets/img/correct-icon.png"/>
+        <img src="{{ image_path }}correct-icon.png"/>
+      {% elif score <= 0 %}
+        <img src="{{ image_path }}incorrect-icon.png"/>
       {% else %}
-        <img src="https://static.sumaysigue.uchile.cl/cmmeduformacion/produccion/assets/img/incorrect-icon.png"/>
+        <img src="{{ image_path }}partial-icon.png"/>
       {%endif%}
+    {%elif respondido %}
+      <div class="capa_alert">Respuesta Enviada.</div>
     {% endif%}
   </div>
   <div class="action">
@@ -52,10 +64,12 @@
               <span id="submission_feedback_{{ location }}" class="submission-feedback">
                 {{texto_intentos}}
               </span>
+              {% if show_answers %}
               <button class="ver_respuesta" data-checking="Cargando..." data-value="Ver Respuesta">
-                <img src="https://static.sumaysigue.uchile.cl/cmmeduformacion/produccion/assets/img/info-icon.png"/></br>
+                <img src="{{ image_path }}info-icon.png"/></br>
                 <span>Ver Respuesta</span>
               </button>
+              {% endif %}
   </div>
       <div class="notificacion" tabindex="-1">
       </div>

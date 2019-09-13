@@ -21,15 +21,41 @@
     <li class="field comp-setting-entry is-set">
       <div class="wrapper-comp-setting">
         <label class="label setting-label" for="weight">Peso</label>
-        <input class="input setting-input" name="weight" id="weight" value="{{weight}}" type="text" />
+        <input class="input setting-input" name="weight" id="weight" value="{{weight}}" type="number" step="1" min="0" />
       </div>
     </li>
     <li class="field comp-setting-entry is-set">
       <div class="wrapper-comp-setting">
         <label class="label setting-label" for="nro_de_intentos">Nro. de Intentos</label>
-        <input class="input setting-input" name="nro_de_intentos" id="nro_de_intentos" value="{{nro_de_intentos}}" type="text" />
+        <input class="input setting-input" name="nro_de_intentos" id="nro_de_intentos" value="{{nro_de_intentos}}" type="number" step="1" min="1" />
       </div>
     </li>
+    <li class="field comp-setting-entry is-set">
+      <div class="wrapper-comp-setting">
+        <label class="label setting-label" for="show_answers">Mostrar Respuestas</label>
+        <select class="show_answers" name="show_answers" show-answers-id="{{key}}">
+          {% if show_answers %}
+            <option value="True" selected>Mostrar</option>
+            <option value="False">Ocultar</option>
+          {% else %}
+            <option value="True">Mostrar</option>
+            <option value="False" selected>Ocultar</option>
+          {% endif %}
+        </select>
+    </li>
+    <li class="field comp-setting-entry is-set">
+        <div class="wrapper-comp-setting">
+          <label class="label setting-label" for="show_ticket">Mostrar Ticket</label>
+          <select class="show_ticket" name="show_ticket" show-answers-id="{{key}}">
+            {% if show_ticket %}
+              <option value="True" selected>Mostrar</option>
+              <option value="False">Ocultar</option>
+            {% else %}
+              <option value="True">Mostrar</option>
+              <option value="False" selected>Ocultar</option>
+            {% endif %}
+          </select>
+      </li>
     <li class="field comp-setting-entry is-set" id="listapreguntas">
       {% for key, value in preguntas %}
         <div class="div-pregunta-{{key}}">

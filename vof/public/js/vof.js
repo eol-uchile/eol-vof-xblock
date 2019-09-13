@@ -1,5 +1,5 @@
 /* Javascript for VoFXBlock. */
-function VoFXBlock(runtime, element) {
+function VoFXBlock(runtime, element, settings) {
 
     var $ = window.jQuery;
     var $element = $(element);
@@ -11,42 +11,62 @@ function VoFXBlock(runtime, element) {
     var statusDiv = $element.find('.status');
 
     function updateText(result) {
-    //actualizo el texto de correcto o incorrecto y desactivo el boton si es que se supero el nro de intentos
-        if(result.score >= 1){
-            $element.find('.notificacion').html('');
-            $element.find('.notificacion').removeClass('lineaarriba');
-            $element.find('.notificacion').removeClass('incorrecto');
-            $element.find('.notificacion').addClass('correcto');
-            $element.find('.notificacion.correcto').addClass('lineaarriba');
-            $element.find('.notificacion.correcto').html('<img src="https://static.sumaysigue.uchile.cl/cmmeduformacion/produccion/assets/img/correct-icon.png"/>'+result.texto);
-            $element.find('.elticket').html('<img src="https://static.sumaysigue.uchile.cl/cmmeduformacion/produccion/assets/img/correct-icon.png"/>');
+        //reviso si estoy mostrando correctitud
+        if(result.show_ticket){
+            //actualizo el texto de correcto o incorrecto
+            if(result.score >= 1){
+                $element.find('.notificacion').html('');
+                $element.find('.notificacion').removeClass('lineaarriba');
+                $element.find('.notificacion').removeClass('incorrecto');
+                $element.find('.notificacion').removeClass('parcial');
+                $element.find('.notificacion').addClass('correcto');
+                $element.find('.notificacion.correcto').addClass('lineaarriba');
+                $element.find('.notificacion.correcto').html('<img src="'+settings.image_path+'correct-icon.png"/>'+result.texto);
+                $element.find('.elticket').html('<img src="'+settings.image_path+'correct-icon.png"/>');
+            }
+            else{
+                $element.find('.notificacion').html('');
+                $element.find('.notificacion').removeClass('lineaarriba');
+                $element.find('.notificacion').removeClass('correcto');
+                $element.find('.notificacion').removeClass('parcial');
+                $element.find('.notificacion').addClass('incorrecto');
+                $element.find('.notificacion.incorrecto').addClass('lineaarriba');
+                if(result.score > 0){
+                    $element.find('.notificacion.incorrecto').addClass('parcial');
+                    $element.find('.notificacion.incorrecto').html('<img src="'+settings.image_path+'partial-icon.png"/>'+result.texto);
+                    $element.find('.elticket').html('<img src="'+settings.image_path+'partial-icon.png"/>');
+                }
+                else{
+                    $element.find('.notificacion.incorrecto').html('<img src="'+settings.image_path+'incorrect-icon.png"/>'+result.texto);
+                    $element.find('.elticket').html('<img src="'+settings.image_path+'incorrect-icon.png"/>');
+                }
+            }
+
+            statusDiv.removeClass('correct');
+            statusDiv.removeClass('incorrect');
+            statusDiv.removeClass('unanswered');
+            statusDiv.addClass(result.indicator_class);
         }
         else{
-            $element.find('.notificacion').html('');
-            $element.find('.notificacion').removeClass('lineaarriba');
-            $element.find('.notificacion').removeClass('correcto');
-            $element.find('.notificacion').addClass('incorrecto');
-            $element.find('.notificacion.incorrecto').addClass('lineaarriba');
-            $element.find('.notificacion.incorrecto').html('<img src="https://static.sumaysigue.uchile.cl/cmmeduformacion/produccion/assets/img/incorrect-icon.png"/>'+result.texto);
-            $element.find('.elticket').html('<img src="https://static.sumaysigue.uchile.cl/cmmeduformacion/produccion/assets/img/incorrect-icon.png"/>');
+            //sino, pongo el mensaje y ya
+            $element.find('.elticket').html('<div class="capa_alert">Respuesta Enviada.</div>');
         }
 
-        statusDiv.removeClass('correct');
-        statusDiv.removeClass('incorrect');
-        statusDiv.removeClass('unanswered');
-        statusDiv.addClass(result.indicator_class);
-
+        //desactivo el boton si es que se supero el nro de intentos
         if(result.nro_de_intentos > 0){
             subFeedback.text('Has realizado '+result.intentos+' de '+result.nro_de_intentos+' intentos');
             if(result.intentos >= result.nro_de_intentos){
                 buttonCheck.attr("disabled", true);
+                $element.find('.tablagrande').addClass('noclick');
             }
             else{
                 buttonCheck.attr("disabled", false);
+                $element.find('.tablagrande').removeClass('noclick');
             }
         }
         else{
             buttonCheck.attr("disabled", false);
+            $element.find('.tablagrande').addClass('noclick');
         }
         buttonCheck.html("<span>" + buttonCheck[0].dataset.value + "</span>");
     }
@@ -66,7 +86,6 @@ function VoFXBlock(runtime, element) {
     var handlerUrlVerResp = runtime.handlerUrl(element, 'mostrar_respuesta');
 
     botonesVoF.click(function(eventObject) {
-        console.log("click");
         eventObject.preventDefault();
         var pid = $(this).children("input[type=radio]").attr('pregunta-id');
         $(this).children("input[type=radio]").prop('checked', true);

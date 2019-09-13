@@ -28,7 +28,7 @@ class VoFXBlock(XBlock):
         display_name="Display Name",
         help="Nombre del componente",
         scope=Scope.settings,
-        default="Verdadero o Falso"
+        default=""
     )
 
     texto_verdadero = String(
@@ -54,9 +54,16 @@ class VoFXBlock(XBlock):
 
     texto_incorrecto = String(
         display_name="Falso",
-        help="Texto que aparece cuando tienes al menos una mala",
+        help="Texto que aparece cuando tienes todas malas",
         scope=Scope.settings,
         default=unicode("Respuesta Incorrecta","utf8")
+    )
+
+    texto_parcial = String(
+        display_name="Falso",
+        help="Texto que aparece cuando tienes una buena pero no el total",
+        scope=Scope.settings,
+        default=unicode("Respuesta parcialmente correcta","utf8")
     )
 
     #preguntas
@@ -81,7 +88,7 @@ class VoFXBlock(XBlock):
         display_name='Weight',
         help='Entero que representa el peso del problema',
         default=1,
-        values={'min': 1},
+        values={'min': 0},
         scope=Scope.settings,
     )
 
@@ -100,6 +107,12 @@ class VoFXBlock(XBlock):
         values={'min': 0},
         scope=Scope.user_state,
     )
+
+    show_answers = Boolean(help="Mostrar boton de mostrar respuestas", default=False,
+        scope=Scope.settings)
+
+    show_ticket = Boolean(help="Mostrar ticket y mensaje de correcto o incorrecto", default=True,
+        scope=Scope.settings)
 
     has_score = True
 
@@ -126,7 +139,10 @@ class VoFXBlock(XBlock):
         for item in additional_js:
             url = self.runtime.local_resource_url(self, item)
             fragment.add_javascript_url(url)
-        fragment.initialize_js(initialize_js_func)
+        settings = {
+            'image_path': self.runtime.local_resource_url(self, 'public/images/')
+        }
+        fragment.initialize_js(initialize_js_func, json_args=settings)
         return fragment
 
     def student_view(self, context={}):
@@ -161,7 +177,10 @@ class VoFXBlock(XBlock):
                 'no_mas_intentos': no_mas_intentos,
                 'score': self.score,
                 'respondido': self.respondido,
+                'show_answers': self.show_answers,
+                'show_ticket': self.show_ticket,
                 'indicator_class': indicator_class,
+                'image_path' : self.runtime.local_resource_url(self, 'public/images/'),
                 'location': unicode(self.location).split('@')[-1]
             }
         )
@@ -198,6 +217,8 @@ class VoFXBlock(XBlock):
                 'texto_verdadero': self.texto_verdadero,
                 'texto_falso': self.texto_falso,
                 'weight': self.weight,
+                'show_answers': self.show_answers,
+                'show_ticket': self.show_ticket,
                 'nro_de_intentos': self.max_attempts
             }
         )
@@ -231,8 +252,6 @@ class VoFXBlock(XBlock):
         for e in data['respuestas']:
             #WARNING: No sé por qué esto llega como string y se guarda como string en el studio_submit
             idpreg = e['name']
-            print(idpreg)
-            print(self.preguntas[idpreg])
             miresp = ''
             if e['value'] == 'verdadero':
                 miresp = True
@@ -254,15 +273,22 @@ class VoFXBlock(XBlock):
         if nuevas_resps:
             self.respuestas = nuevas_resps
 
-        #puntaje - falta peso
+        #puntaje
         self.score = float(buenas/(malas+buenas))
+
+        print(self.score)
+
+        if self.score > 0 and self.score < 1:
+            texto = self.texto_parcial
+
+        ptje = float(self.weight)*self.score
         try:
             self.runtime.publish(
                 self,
                 'grade',
                 {
-                    'value': self.score,
-                    'max_value': 1
+                    'value': ptje,
+                    'max_value': self.weight
                 }
             )
             self.intentos += 1
@@ -275,7 +301,7 @@ class VoFXBlock(XBlock):
         #status respuesta
         indicator_class = self.get_indicator_class()
 
-        return {'texto':texto,'score':self.score, 'nro_de_intentos': self.max_attempts, 'intentos': self.intentos, 'indicator_class':indicator_class}
+        return {'texto':texto,'score':self.score, 'nro_de_intentos': self.max_attempts, 'intentos': self.intentos, 'indicator_class':indicator_class, 'show_ticket': self.show_ticket }
     
     @XBlock.json_handler
     def mostrar_respuesta(self, data, suffix=''):
@@ -302,7 +328,15 @@ class VoFXBlock(XBlock):
         self.display_name = data.get('display_name')
         self.texto_verdadero = data.get('texto_verdadero')
         self.texto_falso = data.get('texto_falso')
-        if data.get('weight') > 0:
+        if data.get('show_answers') == "True":
+            self.show_answers = True
+        else:
+            self.show_answers = False
+        if data.get('show_ticket') == "True":
+            self.show_ticket = True
+        else:
+            self.show_ticket = False
+        if data.get('weight') >= 0:
             self.weight = data.get('weight')
         if data.get('nro_de_intentos') > 0:
             self.max_attempts = data.get('nro_de_intentos')
