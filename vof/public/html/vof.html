@@ -1,7 +1,7 @@
 {% load i18n %}
 <div class="vof_block">
   <h3 class="vof-header">{{ display_name }}</h3>
-  {% if show_ticket %}
+  {% if show_correctness != 'never' %}
     <div class="status {{ indicator_class }}" id="status_{{ location }}">
   {% else %}
     <div class="status " id="status_{{ location }}">
@@ -14,7 +14,7 @@
     {% endif %}
       {% for key, value in preguntas %}
                     <div class="dtrow">
-                        <div class="dtcell1">{{value.enunciado}}</div>
+                        <div class="dtcell1">{{value.enunciado|safe}}</div>
                         <div class="dtcell3">
                             <div class="opcV opcV{{key}} opcion">
                             {{ texto_verdadero }}<input type="radio" class="radiovof" pregunta-id="{{ key }}" name="{{ key }}_{{ location }}" value="verdadero"/>
@@ -41,7 +41,7 @@
       {% endfor %}
   </div>
   <div class="elticket">
-    {%if respondido and show_ticket%}
+    {%if respondido and show_correctness != 'never'%}
       {%if score >= 1%}
         <img src="{{ image_path }}correct-icon.png"/>
       {% elif score <= 0 %}
@@ -49,8 +49,6 @@
       {% else %}
         <img src="{{ image_path }}partial-icon.png"/>
       {%endif%}
-    {%elif respondido %}
-      <div class="capa_alert">Respuesta Enviada.</div>
     {% endif%}
   </div>
   <div class="action">
@@ -66,8 +64,8 @@
               </span>
               {% if show_answers %}
               <button class="ver_respuesta" data-checking="Cargando..." data-value="Ver Respuesta">
-                <img src="{{ image_path }}info-icon.png"/></br>
-                <span>Ver Respuesta</span>
+                <span class="icon fa fa-info-circle" aria-hidden="true"></span></br>
+                <span>Mostrar<br/>Respuesta</span>
               </button>
               {% endif %}
   </div>

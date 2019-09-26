@@ -65,6 +65,15 @@
     border-top: 3px solid #008100;
 }
 
+.vof_block .notificacion.dontshowcorrectness.lineaarriba{
+    border-top: 3px solid #0075b4;
+}
+
+.vof_block .notificacion.dontshowcorrectness .fa-info-circle{
+    margin-right: 15px;
+    color: #0075b4;
+}
+
 .vof_block .notificacion{
     margin-top: 10px;
     padding: 8px 10px 4px 10px;
@@ -83,6 +92,7 @@
 .vof_block .ver_respuesta{
     float:right;
     font-size:14px;
+    line-height: 1.3;
     cursor: pointer;
     border: none;
     color: #0066a2;
@@ -119,6 +129,8 @@
     border-spacing: 1px;
     line-height: 1.2;
     margin: auto;
+    /* para corregir bug en edx con palabras largas */
+    word-break: normal;
 }
 .vof_block .tablagrande .botonResponderchico{margin: 0;}
 .vof_block .tablagrande [class^=dtrow]{display: table-row;color:#727277; }

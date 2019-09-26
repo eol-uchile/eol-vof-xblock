@@ -43,19 +43,6 @@
           {% endif %}
         </select>
     </li>
-    <li class="field comp-setting-entry is-set">
-        <div class="wrapper-comp-setting">
-          <label class="label setting-label" for="show_ticket">Mostrar Ticket</label>
-          <select class="show_ticket" name="show_ticket" show-answers-id="{{key}}">
-            {% if show_ticket %}
-              <option value="True" selected>Mostrar</option>
-              <option value="False">Ocultar</option>
-            {% else %}
-              <option value="True">Mostrar</option>
-              <option value="False" selected>Ocultar</option>
-            {% endif %}
-          </select>
-      </li>
     <li class="field comp-setting-entry is-set" id="listapreguntas">
       {% for key, value in preguntas %}
         <div class="div-pregunta-{{key}}">
@@ -80,10 +67,7 @@
           </div>
         </div>
       {% endfor %}
-    </li>
-    <li>
-      {{location}}
-    </li>
+  </li>
   </ul>
   <div class="xblock-actions">
     <ul>

@@ -12,12 +12,13 @@ function VoFXBlock(runtime, element, settings) {
 
     function updateText(result) {
         //reviso si estoy mostrando correctitud
-        if(result.show_ticket){
+        if(result.show_correctness != 'never'){
             //actualizo el texto de correcto o incorrecto
             if(result.score >= 1){
                 $element.find('.notificacion').html('');
                 $element.find('.notificacion').removeClass('lineaarriba');
                 $element.find('.notificacion').removeClass('incorrecto');
+                $element.find('.notificacion').removeClass('dontshowcorrectness');
                 $element.find('.notificacion').removeClass('parcial');
                 $element.find('.notificacion').addClass('correcto');
                 $element.find('.notificacion.correcto').addClass('lineaarriba');
@@ -28,6 +29,7 @@ function VoFXBlock(runtime, element, settings) {
                 $element.find('.notificacion').html('');
                 $element.find('.notificacion').removeClass('lineaarriba');
                 $element.find('.notificacion').removeClass('correcto');
+                $element.find('.notificacion').removeClass('dontshowcorrectness');
                 $element.find('.notificacion').removeClass('parcial');
                 $element.find('.notificacion').addClass('incorrecto');
                 $element.find('.notificacion.incorrecto').addClass('lineaarriba');
@@ -48,8 +50,15 @@ function VoFXBlock(runtime, element, settings) {
             statusDiv.addClass(result.indicator_class);
         }
         else{
-            //sino, pongo el mensaje y ya
-            $element.find('.elticket').html('<div class="capa_alert">Respuesta Enviada.</div>');
+            $element.find('.notificacion').html('');
+            $element.find('.notificacion').removeClass('lineaarriba');
+            $element.find('.notificacion').removeClass('correcto');
+            $element.find('.notificacion').removeClass('incorrecto');
+            $element.find('.notificacion').removeClass('parcial');
+            $element.find('.notificacion').addClass('dontshowcorrectness');
+            $element.find('.notificacion.dontshowcorrectness').addClass('lineaarriba');
+            $element.find('.notificacion.dontshowcorrectness').html('<span class="icon fa fa-info-circle" aria-hidden="true"></span>Respuesta enviada.');
+            $element.find('.elticket').html();
         }
 
         //desactivo el boton si es que se supero el nro de intentos

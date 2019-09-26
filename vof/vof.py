@@ -11,6 +11,10 @@ from django.template.context import Context
 from xblock.fields import Integer, String, Dict, Scope, Float, Boolean
 from xblockutils.resources import ResourceLoader
 from xblock.fragment import Fragment
+from datetime import datetime, timedelta
+import pytz
+
+utc=pytz.UTC
 
 loader = ResourceLoader(__name__)
 
@@ -111,9 +115,6 @@ class VoFXBlock(XBlock):
     show_answers = Boolean(help="Mostrar boton de mostrar respuestas", default=False,
         scope=Scope.settings)
 
-    show_ticket = Boolean(help="Mostrar ticket y mensaje de correcto o incorrecto", default=True,
-        scope=Scope.settings)
-
     has_score = True
 
     def resource_string(self, path):
@@ -178,10 +179,10 @@ class VoFXBlock(XBlock):
                 'score': self.score,
                 'respondido': self.respondido,
                 'show_answers': self.show_answers,
-                'show_ticket': self.show_ticket,
                 'indicator_class': indicator_class,
                 'image_path' : self.runtime.local_resource_url(self, 'public/images/'),
-                'location': unicode(self.location).split('@')[-1]
+                'location': unicode(self.location).split('@')[-1],
+                'show_correctness': self.get_show_correctness()
             }
         )
         template = loader.render_django_template(
@@ -218,7 +219,6 @@ class VoFXBlock(XBlock):
                 'texto_falso': self.texto_falso,
                 'weight': self.weight,
                 'show_answers': self.show_answers,
-                'show_ticket': self.show_ticket,
                 'nro_de_intentos': self.max_attempts
             }
         )
@@ -236,9 +236,7 @@ class VoFXBlock(XBlock):
         )    
         return frag
 
-    # TO-DO: change this handler to perform your own actions.  You may need more
-    # than one handler, or you may not need any handlers at all.
-        # handler para votar sí o no
+    # handler para votar sí o no
     @XBlock.json_handler
     def responder(self, data, suffix=''):  # pylint: disable=unused-argument
         """
@@ -276,8 +274,6 @@ class VoFXBlock(XBlock):
         #puntaje
         self.score = float(buenas/(malas+buenas))
 
-        print(self.score)
-
         if self.score > 0 and self.score < 1:
             texto = self.texto_parcial
 
@@ -301,7 +297,13 @@ class VoFXBlock(XBlock):
         #status respuesta
         indicator_class = self.get_indicator_class()
 
-        return {'texto':texto,'score':self.score, 'nro_de_intentos': self.max_attempts, 'intentos': self.intentos, 'indicator_class':indicator_class, 'show_ticket': self.show_ticket }
+        return {
+                'texto':texto,'score':self.score,
+                'nro_de_intentos': self.max_attempts,
+                'intentos': self.intentos, 
+                'indicator_class':indicator_class,
+                'show_correctness': self.get_show_correctness() 
+                }
     
     @XBlock.json_handler
     def mostrar_respuesta(self, data, suffix=''):
@@ -332,10 +334,6 @@ class VoFXBlock(XBlock):
             self.show_answers = True
         else:
             self.show_answers = False
-        if data.get('show_ticket') == "True":
-            self.show_ticket = True
-        else:
-            self.show_ticket = False
         if data.get('weight') >= 0:
             self.weight = data.get('weight')
         if data.get('nro_de_intentos') > 0:
@@ -352,6 +350,21 @@ class VoFXBlock(XBlock):
             else:
                 indicator_class = 'incorrect'
         return indicator_class
+
+    def get_show_correctness(self):
+        if hasattr(self, 'show_correctness'):
+            if self.show_correctness == 'past_due':
+                #si no se hace lo del tzinfo, django se cae
+                start_time = self.due.replace(tzinfo=utc)
+                end_time = datetime.now().replace(tzinfo=utc)
+                if start_time < end_time:
+                    return "always"
+                else:
+                    return "never"
+            else:
+                return self.show_correctness
+        else:
+            return "always"
 
     # TO-DO: change this to create the scenarios you'd like to see in the
     # workbench while developing your XBlock.
