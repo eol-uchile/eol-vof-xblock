@@ -50,6 +50,12 @@ function VoFXBlock(runtime, element, settings) {
             statusDiv.addClass(result.indicator_class);
         }
         else{
+            statusDiv.removeClass('correct');
+            statusDiv.removeClass('incorrect');
+            statusDiv.removeClass('unanswered');
+            //no deberia pasar pero por si las moscas
+            if(result.indicator_class == 'unanswered')
+                statusDiv.addClass('unanswered');
             $element.find('.notificacion').html('');
             $element.find('.notificacion').removeClass('lineaarriba');
             $element.find('.notificacion').removeClass('correcto');

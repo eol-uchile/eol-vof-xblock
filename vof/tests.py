@@ -56,7 +56,7 @@ class VoFXblockTestCase(unittest.TestCase):
         Reviso si se creo bien el xblock por defecto, sin intentos y sin respuestas.
         """
         self.assertEqual(self.xblock.display_name, '')
-        self.assertEqual(self.xblock.intentos, 0)
+        self.assertEqual(self.xblock.attempts, 0)
         self.assertEqual(self.xblock.score, 0.0)
         self.assertEqual(self.xblock.show_answers, False)
         self.assertEqual(self.xblock.texto_verdadero, 'V')

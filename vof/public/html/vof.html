@@ -1,7 +1,7 @@
 {% load i18n %}
 <div class="vof_block">
   <h3 class="vof-header">{{ display_name }}</h3>
-  {% if show_correctness != 'never' %}
+  {% if show_correctness != 'never'  or indicator_class == 'unanswered' %}
     <div class="status {{ indicator_class }}" id="status_{{ location }}">
   {% else %}
     <div class="status " id="status_{{ location }}">

@@ -104,7 +104,7 @@ class VoFXBlock(XBlock):
         scope=Scope.settings,
     )
 
-    intentos = Integer(
+    attempts = Integer(
         display_name='Intentos',
         help='Cuantas veces el estudiante ha intentado responder',
         default=0,
@@ -158,8 +158,8 @@ class VoFXBlock(XBlock):
         no_mas_intentos = False
 
         if self.max_attempts > 0:
-            texto_intentos = "Has realizado "+str(self.intentos)+" de "+str(self.max_attempts)+" intentos"
-            if self.intentos >= self.max_attempts:
+            texto_intentos = "Has realizado "+str(self.attempts)+" de "+str(self.max_attempts)+" intentos"
+            if self.attempts >= self.max_attempts:
                 no_mas_intentos = True
 
         #status respuesta
@@ -287,7 +287,7 @@ class VoFXBlock(XBlock):
                     'max_value': self.weight
                 }
             )
-            self.intentos += 1
+            self.attempts += 1
         except IntegrityError:
             pass
 
@@ -300,7 +300,7 @@ class VoFXBlock(XBlock):
         return {
                 'texto':texto,'score':self.score,
                 'nro_de_intentos': self.max_attempts,
-                'intentos': self.intentos, 
+                'intentos': self.attempts, 
                 'indicator_class':indicator_class,
                 'show_correctness': self.get_show_correctness() 
                 }
@@ -344,7 +344,7 @@ class VoFXBlock(XBlock):
 
     def get_indicator_class(self):
         indicator_class = 'unanswered'
-        if self.respondido and self.intentos:
+        if self.respondido and self.attempts:
             if self.score >= 1:
                 indicator_class = 'correct'
             else:
