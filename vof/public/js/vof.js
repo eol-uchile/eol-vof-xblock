@@ -68,11 +68,13 @@ function VoFXBlock(runtime, element, settings) {
         }
 
         //desactivo el boton si es que se supero el nro de intentos
+        var finalice = false;
         if(result.nro_de_intentos > 0){
             subFeedback.text('Has realizado '+result.intentos+' de '+result.nro_de_intentos+' intentos');
             if(result.intentos >= result.nro_de_intentos){
                 buttonCheck.attr("disabled", true);
                 $element.find('.tablagrande').addClass('noclick');
+                finalice = true;
             }
             else{
                 buttonCheck.attr("disabled", false);
@@ -81,8 +83,20 @@ function VoFXBlock(runtime, element, settings) {
         }
         else{
             buttonCheck.attr("disabled", false);
-            $element.find('.tablagrande').addClass('noclick');
+            $element.find('.tablagrande').removeClass('noclick');
         }
+
+        if(finalice || (result.intentos >0 && result.nro_de_intentos <= 0)){
+            if(result.show_answers == 'Finalizado' && !$element.find('.ver_respuesta').length && result.show_correctness != 'never'){
+                var mostrar_resp = '<button class="ver_respuesta" data-checking="Cargando..." data-value="Ver Respuesta">'
+                                    + '<span class="icon fa fa-info-circle" aria-hidden="true"></span></br>'
+                                    + '<span>Mostrar<br/>Respuesta</span>'
+                                    + '</button>';
+                $element.find('.action').append(mostrar_resp);
+            }
+            clickVerRespuesta();
+        }
+
         buttonCheck.html("<span>" + buttonCheck[0].dataset.value + "</span>");
     }
 
@@ -118,6 +132,12 @@ function VoFXBlock(runtime, element, settings) {
         eventObject.preventDefault();
         buttonCheck.html("<span>" + buttonCheck[0].dataset.checking + "</span>");
         buttonCheck.attr("disabled", true);
+        if ($.isFunction(runtime.notify)) {
+            runtime.notify('submit', {
+                message: 'Submitting...',
+                state: 'start'
+            });
+        }
         var resp,resps = [];
         $element.find('.radiovof:checked').each(function() { // run through each of the checkboxes
             resp = {
@@ -133,18 +153,28 @@ function VoFXBlock(runtime, element, settings) {
             data: JSON.stringify({"respuestas": resps}),
             success: updateText
         });
+        if ($.isFunction(runtime.notify)) {
+            runtime.notify('submit', {
+                state: 'end'
+            });
+        }
     });
 
-    buttonVerRespuesta.click(function(eventObject) {
-        eventObject.preventDefault();
-        buttonVerRespuesta.attr("disabled", true);
-        $.ajax({
-            type: "POST",
-            url: handlerUrlVerResp,
-            data: JSON.stringify({}),
-            success: showAnswers
+
+    function clickVerRespuesta(){
+        buttonVerRespuesta = $element.find('.ver_respuesta');
+        buttonVerRespuesta.click(function(eventObject) {
+            eventObject.preventDefault();
+            buttonVerRespuesta.attr("disabled", true);
+            $.ajax({
+                type: "POST",
+                url: handlerUrlVerResp,
+                data: JSON.stringify({}),
+                success: showAnswers
+            });
         });
-    });
+    }
+    clickVerRespuesta();
 
     console.log(lasRespuestas);
     lasRespuestas.each(function() {

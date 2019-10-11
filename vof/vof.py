@@ -11,7 +11,7 @@ from django.template.context import Context
 from xblock.fields import Integer, String, Dict, Scope, Float, Boolean
 from xblockutils.resources import ResourceLoader
 from xblock.fragment import Fragment
-from datetime import datetime, timedelta
+import datetime
 import pytz
 
 utc=pytz.UTC
@@ -32,7 +32,7 @@ class VoFXBlock(XBlock):
         display_name="Display Name",
         help="Nombre del componente",
         scope=Scope.settings,
-        default=""
+        default="True or False XBlock"
     )
 
     texto_verdadero = String(
@@ -82,6 +82,14 @@ class VoFXBlock(XBlock):
     #si respondió o no
     respondido = Boolean(help="Respondió?", default=False,
         scope=Scope.user_state)
+
+    theme = String(
+        display_name = "Estilo",
+        help = "Cambiar estilo de la pregunta",
+        default = "SumaySigue",
+        values = ["SumaySigue", "Media"],
+        scope = Scope.settings
+    )
     
     score = Float(
         default=0.0,
@@ -100,7 +108,7 @@ class VoFXBlock(XBlock):
         display_name='Nro. de Intentos',
         help='Entero que representa cuantas veces se puede responder problema',
         default=2,
-        values={'min': 1},
+        values={'min': 0},
         scope=Scope.settings,
     )
 
@@ -112,8 +120,14 @@ class VoFXBlock(XBlock):
         scope=Scope.user_state,
     )
 
-    show_answers = Boolean(help="Mostrar boton de mostrar respuestas", default=False,
-        scope=Scope.settings)
+    
+    show_answer = String(
+        display_name = "Mostrar Respuestas",
+        help = "Si aparece o no el boton mostrar respuestas",
+        default = "Finalizado",
+        values = ["Mostrar", "Finalizado", "Ocultar"],
+        scope = Scope.settings
+    )
 
     has_score = True
 
@@ -153,7 +167,7 @@ class VoFXBlock(XBlock):
         #Tuve que pasar las preguntas a una lista para ordenarlas, TO DO: pasar a listas o ver que es mas eficiente
         lista_pregs = [ [k,v] for k, v in self.preguntas.items() ]
         lista_pregs = sorted(lista_pregs, key=lambda x: int(x[0]))
-
+        asdf = self.is_past_due()
         texto_intentos = ''
         no_mas_intentos = False
 
@@ -170,19 +184,23 @@ class VoFXBlock(XBlock):
                 'display_name': self.display_name,
                 'preguntas': lista_pregs,
                 'respuestas': self.respuestas,
+                'theme': self.theme,
                 'texto_verdadero': self.texto_verdadero,
                 'texto_falso': self.texto_falso,
                 'texto_correcto': self.texto_correcto,
                 'texto_incorrecto': self.texto_incorrecto,
                 'texto_intentos': texto_intentos,
                 'no_mas_intentos': no_mas_intentos,
+                'nro_de_intentos': self.max_attempts,
                 'score': self.score,
                 'respondido': self.respondido,
-                'show_answers': self.show_answers,
+                'show_answers': self.show_answer,
+                'problem_progress': self.get_problem_progress(),
                 'indicator_class': indicator_class,
                 'image_path' : self.runtime.local_resource_url(self, 'public/images/'),
                 'location': unicode(self.location).split('@')[-1],
-                'show_correctness': self.get_show_correctness()
+                'show_correctness': self.get_show_correctness(),
+                'is_past_due': self.get_is_past_due
             }
         )
         template = loader.render_django_template(
@@ -218,7 +236,8 @@ class VoFXBlock(XBlock):
                 'texto_verdadero': self.texto_verdadero,
                 'texto_falso': self.texto_falso,
                 'weight': self.weight,
-                'show_answers': self.show_answers,
+                'show_answers': self.show_answer,
+                'theme': self.theme,
                 'nro_de_intentos': self.max_attempts
             }
         )
@@ -242,68 +261,82 @@ class VoFXBlock(XBlock):
         """
         Responder el V o F
         """
-        nuevas_resps = {}
-        texto = self.texto_correcto
-        buenas = 0.0
-        malas = 0.0
-        total = len(self.preguntas)
-        for e in data['respuestas']:
-            #WARNING: No sé por qué esto llega como string y se guarda como string en el studio_submit
-            idpreg = e['name']
-            miresp = ''
-            if e['value'] == 'verdadero':
-                miresp = True
-                nuevas_resps[idpreg] = 'verdadero'
-            elif e['value'] == 'falso':
-                miresp = False
-                nuevas_resps[idpreg] = 'falso'
-            if miresp != self.preguntas[idpreg]['valor']:
+        #Reviso si no estoy haciendo trampa y contestando mas veces en paralelo
+        if ((self.attempts + 1) <= self.max_attempts) or self.max_attempts <= 0:
+            nuevas_resps = {}
+            texto = self.texto_correcto
+            buenas = 0.0
+            malas = 0.0
+            total = len(self.preguntas)
+            for e in data['respuestas']:
+                #WARNING: No sé por qué esto llega como string y se guarda como string en el studio_submit
+                idpreg = e['name']
+                miresp = ''
+                if e['value'] == 'verdadero':
+                    miresp = True
+                    nuevas_resps[idpreg] = 'verdadero'
+                elif e['value'] == 'falso':
+                    miresp = False
+                    nuevas_resps[idpreg] = 'falso'
+                if miresp != self.preguntas[idpreg]['valor']:
+                    texto = self.texto_incorrecto
+                    malas+=1
+                else:
+                    buenas+=1
+                
+            malas = (total-buenas)
+            if malas > 0:
                 texto = self.texto_incorrecto
-                malas+=1
-            else:
-                buenas+=1
-            
-        malas = (total-buenas)
-        if malas > 0:
-            texto = self.texto_incorrecto
 
-        #si no llego nada no lo actualizo
-        if nuevas_resps:
-            self.respuestas = nuevas_resps
+            #si no llego nada no lo actualizo
+            if nuevas_resps:
+                self.respuestas = nuevas_resps
 
-        #puntaje
-        self.score = float(buenas/(malas+buenas))
+            #puntaje
+            self.score = float(buenas/(malas+buenas))
 
-        if self.score > 0 and self.score < 1:
-            texto = self.texto_parcial
+            if self.score > 0 and self.score < 1:
+                texto = self.texto_parcial
 
-        ptje = float(self.weight)*self.score
-        try:
-            self.runtime.publish(
-                self,
-                'grade',
-                {
-                    'value': ptje,
-                    'max_value': self.weight
-                }
-            )
-            self.attempts += 1
-        except IntegrityError:
-            pass
+            ptje = float(self.weight)*self.score
+            try:
+                self.runtime.publish(
+                    self,
+                    'grade',
+                    {
+                        'value': ptje,
+                        'max_value': self.weight
+                    }
+                )
+                self.attempts += 1
+            except IntegrityError:
+                pass
 
-        #ya respondi
-        self.respondido = True
+            #ya respondi
+            self.respondido = True
 
-        #status respuesta
-        indicator_class = self.get_indicator_class()
+            #status respuesta
+            indicator_class = self.get_indicator_class()
 
-        return {
-                'texto':texto,'score':self.score,
-                'nro_de_intentos': self.max_attempts,
-                'intentos': self.attempts, 
-                'indicator_class':indicator_class,
-                'show_correctness': self.get_show_correctness() 
-                }
+            return {
+                    'texto':texto,
+                    'score':self.score,
+                    'nro_de_intentos': self.max_attempts,
+                    'intentos': self.attempts, 
+                    'indicator_class':indicator_class,
+                    'show_correctness': self.get_show_correctness(),
+                    'show_answers': self.show_answer 
+                    }
+        else:
+            return {
+                    'texto': unicode('Error: El estado de este problema fue modificado, por favor recargue la página.','utf8'),
+                    'score':self.score,
+                    'nro_de_intentos': self.max_attempts,
+                    'intentos': self.attempts, 
+                    'indicator_class': self.get_indicator_class(),
+                    'show_correctness': self.get_show_correctness(),
+                    'show_answers': self.show_answer 
+                    }
     
     @XBlock.json_handler
     def mostrar_respuesta(self, data, suffix=''):
@@ -330,10 +363,8 @@ class VoFXBlock(XBlock):
         self.display_name = data.get('display_name')
         self.texto_verdadero = data.get('texto_verdadero')
         self.texto_falso = data.get('texto_falso')
-        if data.get('show_answers') == "True":
-            self.show_answers = True
-        else:
-            self.show_answers = False
+        self.theme = data.get('theme')
+        self.show_answer = data.get('show_answers')
         if data.get('weight') >= 0:
             self.weight = data.get('weight')
         if data.get('nro_de_intentos') > 0:
@@ -354,17 +385,66 @@ class VoFXBlock(XBlock):
     def get_show_correctness(self):
         if hasattr(self, 'show_correctness'):
             if self.show_correctness == 'past_due':
-                #si no se hace lo del tzinfo, django se cae
-                start_time = self.due.replace(tzinfo=utc)
-                end_time = datetime.now().replace(tzinfo=utc)
-                if start_time < end_time:
-                    return "always"
-                else:
-                    return "never"
+               if self.is_past_due():
+                   return "always"
+               else:
+                   return "never"
             else:
                 return self.show_correctness
         else:
             return "always"
+
+    def get_is_past_due(self):
+        if hasattr(self, 'show_correctness'):
+            return self.is_past_due()
+        else:
+            return False
+
+    def is_past_due(self):
+        """
+        Determine if component is past-due
+        """
+        # These values are pulled from platform.
+        # They are defaulted to None for tests.
+        due = getattr(self, 'due', None)
+        graceperiod = getattr(self, 'graceperiod', None)
+        # Calculate the current DateTime so we can compare the due date to it.
+        # datetime.utcnow() returns timezone naive date object.
+        now = datetime.datetime.utcnow()
+        if due is not None:
+            # Remove timezone information from platform provided due date.
+            # Dates are stored as UTC timezone aware objects on platform.
+            due = due.replace(tzinfo=None)
+            if graceperiod is not None:
+                # Compare the datetime objects (both have to be timezone naive)
+                due = due + graceperiod
+            return now > due
+        return False
+
+    def get_problem_progress(self):
+        """
+        Returns a statement of progress for the XBlock, which depends
+        on the user's current score
+        """
+        calif = ' (no calificable)'
+        if hasattr(self, 'graded') and self.graded:
+            calif = ' (calificable)'
+        if self.weight == 0:
+            result = '0 puntos posibles'+calif
+        elif self.attempts <= 0:
+            if self.weight == 1:
+                result = "1 punto posible"+calif
+            else:
+                result = str(self.weight)+" puntos posibles"+calif
+        else:
+            scaled_score = self.score * self.weight
+            # No trailing zero and no scientific notation
+            score_string = ('%.15f' % scaled_score).rstrip('0').rstrip('.')
+            if self.weight == 1:
+                result = str(score_string)+"/"+str(self.weight)+" punto"+calif
+            else:
+                result = str(score_string)+"/"+str(self.weight)+" puntos"+calif
+        return result
 
     # TO-DO: change this to create the scenarios you'd like to see in the
     # workbench while developing your XBlock.

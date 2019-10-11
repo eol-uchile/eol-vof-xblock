@@ -21,6 +21,7 @@ function VoFEditBlock(runtime, element) {
         weight: $(element).find('input[name=weight]').val(),
         nro_de_intentos: $(element).find('input[name=nro_de_intentos]').val(),
         show_answers: $(element).find('select.show_answers').val(),
+        theme: $(element).find('select.theme').val(),
         preguntas: pregs
       };
       console.log(data)

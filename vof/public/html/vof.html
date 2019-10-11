@@ -1,6 +1,7 @@
 {% load i18n %}
-<div class="vof_block">
+<div class="vof_block {{theme}}">
   <h3 class="vof-header">{{ display_name }}</h3>
+  <div class="problem-progress">{{ problem_progress }}</div>
   {% if show_correctness != 'never'  or indicator_class == 'unanswered' %}
     <div class="status {{ indicator_class }}" id="status_{{ location }}">
   {% else %}
@@ -12,26 +13,70 @@
     {% else %}
       <div class="tablagrande" id="vftable2">
     {% endif %}
+    {% if theme == 'Media' %}
+      <div class="dtrow first">
+        <div class="dtcell1 first"></div>
+        <div class="dtcell3 first">
+            {{ texto_verdadero }}
+        </div>
+        <div class="dtcell2 first">
+            {{ texto_falso }}
+        </div>
+      </div>
       {% for key, value in preguntas %}
-                    <div class="dtrow">
-                        <div class="dtcell1">{{value.enunciado|safe}}</div>
-                        <div class="dtcell3">
-                            <div class="opcV opcV{{key}} opcion">
-                            {{ texto_verdadero }}<input type="radio" class="radiovof" pregunta-id="{{ key }}" name="{{ key }}_{{ location }}" value="verdadero"/>
+                      <div class="dtrow">
+                          <div class="dtcell1">{{value.enunciado|safe}}</div>
+                          <div class="dtcell3">
+                              <div class="opcV opcV{{key}} opcion">
+                                <div class="container">
+                                  <div class="circle">
+                                      <div class="small-circle">
+                                      </div>
+                                  </div>
+                                </div>
+                                <input type="radio" class="radiovof" pregunta-id="{{ key }}" name="{{ key }}_{{ location }}" value="verdadero"/>
+                            </div>
                           </div>
-                        </div>
-                        <div class="dtcell2">
-                            <div class="opcF opcF{{key}} opcion">
-                            {{ texto_falso }}<input type="radio" class="radiovof" pregunta-id="{{ key }}" name="{{ key }}_{{ location }}" value="falso"/>
+                          <div class="dtcell2">
+                              <div class="opcF opcF{{key}} opcion">
+                                <div class="container">
+                                  <div class="circle">
+                                      <div class="small-circle">
+                                      </div>
+                                  </div>
+                                </div>
+                                <input type="radio" class="radiovof" pregunta-id="{{ key }}" name="{{ key }}_{{ location }}" value="falso"/>
+                            </div>
                           </div>
-                        </div>
-                    </div>
-                  <!--
-                  <p>{{value.enunciado}}</p>
-                  {{ texto_verdadero }}<input type="radio" class="radiovof" name="{{ key }}" value="verdadero"/>
-                  {{ texto_falso }}<input type="radio" class="radiovof" name="{{ key }}" value="falso"/>
-                  -->
+                      </div>
+                    <!--
+                    <p>{{value.enunciado}}</p>
+                    {{ texto_verdadero }}<input type="radio" class="radiovof" name="{{ key }}" value="verdadero"/>
+                    {{ texto_falso }}<input type="radio" class="radiovof" name="{{ key }}" value="falso"/>
+                    -->
       {% endfor %}
+    {% else %}
+      {% for key, value in preguntas %}
+                      <div class="dtrow">
+                          <div class="dtcell1">{{value.enunciado|safe}}</div>
+                          <div class="dtcell3">
+                              <div class="opcV opcV{{key}} opcion">
+                              {{ texto_verdadero }}<input type="radio" class="radiovof" pregunta-id="{{ key }}" name="{{ key }}_{{ location }}" value="verdadero"/>
+                            </div>
+                          </div>
+                          <div class="dtcell2">
+                              <div class="opcF opcF{{key}} opcion">
+                              {{ texto_falso }}<input type="radio" class="radiovof" pregunta-id="{{ key }}" name="{{ key }}_{{ location }}" value="falso"/>
+                            </div>
+                          </div>
+                      </div>
+                    <!--
+                    <p>{{value.enunciado}}</p>
+                    {{ texto_verdadero }}<input type="radio" class="radiovof" name="{{ key }}" value="verdadero"/>
+                    {{ texto_falso }}<input type="radio" class="radiovof" name="{{ key }}" value="falso"/>
+                    -->
+      {% endfor %}
+    {% endif %}
     </div>
   <div class="divrespuestas">
       {% for key, value in respuestas.items %}
@@ -54,6 +99,8 @@
   <div class="action">
             {% if no_mas_intentos or preguntas|length == 0 %}
               <button class="check Submit submit" data-checking="Enviando..." data-value="Enviar" aria-describedby="submission_feedback_{{ location }}" disabled="disabled">
+            {% elif is_past_due %}
+              <button class="check Submit submit" data-checking="Enviando..." data-value="Enviar" aria-describedby="submission_feedback_{{ location }}" disabled="disabled">
             {% else %}
               <button class="check Submit submit" data-checking="Enviando..." data-value="Enviar" aria-describedby="submission_feedback_{{ location }}">
             {% endif %}
@@ -62,12 +109,22 @@
               <span id="submission_feedback_{{ location }}" class="submission-feedback">
                 {{texto_intentos}}
               </span>
-              {% if show_answers %}
+            {% if show_answers == 'Mostrar' and show_correctness != 'never' %}
               <button class="ver_respuesta" data-checking="Cargando..." data-value="Ver Respuesta">
                 <span class="icon fa fa-info-circle" aria-hidden="true"></span></br>
                 <span>Mostrar<br/>Respuesta</span>
               </button>
-              {% endif %}
+            {% elif show_answers == 'Finalizado' and no_mas_intentos and show_correctness != 'never' %}
+              <button class="ver_respuesta" data-checking="Cargando..." data-value="Ver Respuesta">
+                <span class="icon fa fa-info-circle" aria-hidden="true"></span></br>
+                <span>Mostrar<br/>Respuesta</span>
+              </button>
+            {% elif show_answers == 'Finalizado' and respondido and nro_de_intentos <= 0 and show_correctness != 'never' %}
+              <button class="ver_respuesta" data-checking="Cargando..." data-value="Ver Respuesta">
+                <span class="icon fa fa-info-circle" aria-hidden="true"></span></br>
+                <span>Mostrar<br/>Respuesta</span>
+              </button>
+            {% endif %}
   </div>
       <div class="notificacion" tabindex="-1">
       </div>

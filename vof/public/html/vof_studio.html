@@ -34,14 +34,28 @@
       <div class="wrapper-comp-setting">
         <label class="label setting-label" for="show_answers">Mostrar Respuestas</label>
         <select class="show_answers" name="show_answers" show-answers-id="{{key}}">
-          {% if show_answers %}
-            <option value="True" selected>Mostrar</option>
-            <option value="False">Ocultar</option>
-          {% else %}
-            <option value="True">Mostrar</option>
-            <option value="False" selected>Ocultar</option>
-          {% endif %}
+          <option value="Mostrar" {% if show_answers == 'Mostrar' %}selected{% endif %}>
+            Mostrar
+          </option>
+          <option value="Finalizado" {% if show_answers == 'Finalizado' %}selected{% endif %}>
+            Finalizado
+          </option>
+          <option value="Ocultar" {% if show_answers == 'Ocultar' %}selected{% endif %}>
+            Ocultar
+          </option>
         </select>
+    </li>
+    <li class="field comp-setting-entry is-set">
+      <div class="wrapper-comp-setting">
+        <label class="label setting-label" for="theme">Estilo</label>
+        <select class="theme" name="theme">
+                  <option value="SumaySigue" {% if theme == 'SumaySigue' %}selected{% endif %}>
+                    SumaySigue (Default)
+                  </option>
+                  <option value="Media" {% if theme == 'Media' %}selected{% endif %}>
+                    Media
+                  </option>
+              </select>
     </li>
     <li class="field comp-setting-entry is-set" id="listapreguntas">
       {% for key, value in preguntas %}
