@@ -55,10 +55,9 @@ class VoFXblockTestCase(unittest.TestCase):
         """
         Reviso si se creo bien el xblock por defecto, sin intentos y sin respuestas.
         """
-        self.assertEqual(self.xblock.display_name, '')
         self.assertEqual(self.xblock.attempts, 0)
         self.assertEqual(self.xblock.score, 0.0)
-        self.assertEqual(self.xblock.show_answers, False)
+        self.assertEqual(self.xblock.show_answer, 'Finalizado')
         self.assertEqual(self.xblock.texto_verdadero, 'V')
         self.assertEqual(self.xblock.texto_falso, 'F')
         self.assertEqual(self.xblock.get_indicator_class(), 'unanswered')
@@ -81,17 +80,22 @@ class VoFXblockTestCase(unittest.TestCase):
         self.assertEqual(response.json_body['indicator_class'], 'incorrect')
         self.assertEqual(response.json_body['intentos'], 2)
 
+    def test_basic_answer2(self):
+        #pruebo respuestas buenas y malas con el problema default
+        request = TestRequest()
+        request.method = 'POST'
+
         data = json.dumps({'respuestas': [{'name': '1', 'value': 'falso'}, {'name': '2', 'value': 'verdadero'}]})
         request.body = data
         response = self.xblock.responder(request)
         self.assertEqual(response.json_body['indicator_class'], 'incorrect')
-        self.assertEqual(response.json_body['intentos'], 3)
+        self.assertEqual(response.json_body['intentos'], 1)
 
         data = json.dumps({'respuestas': [{'name': '1', 'value': 'verdadero'}, {'name': '2', 'value': 'falso'}]})
         request.body = data
         response = self.xblock.responder(request)
         self.assertEqual(response.json_body['indicator_class'], 'correct')
-        self.assertEqual(response.json_body['intentos'], 4)
+        self.assertEqual(response.json_body['intentos'], 2)
 
     def test_add_questions(self):
         #pruebo agregar preguntas
@@ -118,7 +122,8 @@ class VoFXblockTestCase(unittest.TestCase):
                                         {'id': '1', 'enunciado':'pregunta verdadera', 'valor': 'V'},
                                         {'id': '2', 'enunciado':'pregunta verdadera 2', 'valor': 'V'},
                                         {'id': '3', 'enunciado':'pregunta falsa', 'valor': 'F'}
-                                        ]})
+                                        ],
+                            'nro_de_intentos':4})
         request.body = data
         response = self.xblock.studio_submit(request)
 
