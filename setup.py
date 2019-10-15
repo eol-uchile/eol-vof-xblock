@@ -26,8 +26,8 @@ def package_data(pkg, roots):
 setup(
     name='vof-xblock',
     version='0.1',
-    description='vof XBlock',   # TODO: write a better description.
-    license='UNKNOWN',          # TODO: choose a license: 'AGPL v3' and 'Apache 2.0' are popular.
+    description='XBlock table with true/false questions',
+    license='AGPL v3',
     packages=[
         'vof',
     ],
