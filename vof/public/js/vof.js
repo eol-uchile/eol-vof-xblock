@@ -115,6 +115,9 @@ function VoFXBlock(runtime, element, settings) {
     var handlerUrlVerResp = runtime.handlerUrl(element, 'mostrar_respuesta');
 
     botonesVoF.click(function(eventObject) {
+        if(statusDiv.hasClass("unanswered")){
+            buttonCheck.attr("disabled", false);
+        }
         eventObject.preventDefault();
         var pid = $(this).children("input[type=radio]").attr('pregunta-id');
         $(this).children("input[type=radio]").prop('checked', true);
