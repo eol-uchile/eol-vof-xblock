@@ -131,6 +131,8 @@ class VoFXBlock(XBlock):
 
     has_score = True
 
+    icon_class = "problem"
+
     def resource_string(self, path):
         """Handy helper for getting resources from our kit."""
         data = pkg_resources.resource_string(__name__, path)
