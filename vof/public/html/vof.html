@@ -1,6 +1,6 @@
 {% load i18n %}
-<div class="vof_block {{theme}}">
-  <h3 class="vof-header">{{ display_name }}</h3>
+<div class="problem vof_block {{theme}} problems-wrapper">
+  <h3 class="vof-header problem-header">{{ display_name }}</h3>
   <div class="problem-progress">{{ problem_progress }}</div>
   {% if show_correctness != 'never'  or indicator_class == 'unanswered' %}
     <div class="status {{ indicator_class }}" id="status_{{ location }}">
@@ -99,7 +99,7 @@
   <div class="action">
             {% if no_mas_intentos or preguntas|length == 0 %}
               <button class="check Submit submit" data-checking="Enviando..." data-value="Enviar" aria-describedby="submission_feedback_{{ location }}" disabled="disabled">
-            {% elif is_past_due %}
+            {% elif is_past_due or not respondido %}
               <button class="check Submit submit" data-checking="Enviando..." data-value="Enviar" aria-describedby="submission_feedback_{{ location }}" disabled="disabled">
             {% else %}
               <button class="check Submit submit" data-checking="Enviando..." data-value="Enviar" aria-describedby="submission_feedback_{{ location }}">

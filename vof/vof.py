@@ -131,6 +131,8 @@ class VoFXBlock(XBlock):
 
     has_score = True
 
+    icon_class = "problem"
+
     def resource_string(self, path):
         """Handy helper for getting resources from our kit."""
         data = pkg_resources.resource_string(__name__, path)
@@ -167,7 +169,6 @@ class VoFXBlock(XBlock):
         #Tuve que pasar las preguntas a una lista para ordenarlas, TO DO: pasar a listas o ver que es mas eficiente
         lista_pregs = [ [k,v] for k, v in self.preguntas.items() ]
         lista_pregs = sorted(lista_pregs, key=lambda x: int(x[0]))
-        asdf = self.is_past_due()
         texto_intentos = ''
         no_mas_intentos = False
 
@@ -445,6 +446,16 @@ class VoFXBlock(XBlock):
             else:
                 result = str(score_string)+"/"+str(self.weight)+" puntos"+calif
         return result
+
+    def max_score(self):
+        """
+        Returns the configured number of possible points for this component.
+        Arguments:
+            None
+        Returns:
+            float: The number of possible points for this component
+        """
+        return self.weight
 
     # TO-DO: change this to create the scenarios you'd like to see in the
     # workbench while developing your XBlock.
