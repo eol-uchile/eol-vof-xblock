@@ -149,7 +149,7 @@ function VoFXBlock(runtime, element, settings) {
             };
             resps.push(resp);
           });
-          console.log(resps);
+          //console.log(resps);
         $.ajax({
             type: "POST",
             url: handlerUrl,
@@ -179,7 +179,7 @@ function VoFXBlock(runtime, element, settings) {
     }
     clickVerRespuesta();
 
-    console.log(lasRespuestas);
+    //console.log(lasRespuestas);
     lasRespuestas.each(function() {
         if($( this ).val() == 'verdadero'){
             var pid = $( this ).attr('respuesta-id');

@@ -24,7 +24,7 @@ function VoFEditBlock(runtime, element) {
         theme: $(element).find('select.theme').val(),
         preguntas: pregs
       };
-      console.log(data)
+      //console.log(data)
       if ($.isFunction(runtime.notify)) {
         runtime.notify('save', {state: 'start'});
       }
