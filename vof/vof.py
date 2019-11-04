@@ -20,19 +20,13 @@ loader = ResourceLoader(__name__)
 
 @XBlock.needs('i18n')
 class VoFXBlock(XBlock):
-    """
-    TO-DO: XBlock que genera una tabla con preguntas V o F, se considera correcto sólo si se contestó el 100% bien
-    """
-
-        # Fields are defined on the class.  You can access them in your code as
-    # self.<fieldname>.
 
     #campos de los settings
     display_name = String(
         display_name="Display Name",
         help="Nombre del componente",
         scope=Scope.settings,
-        default="True or False XBlock"
+        default="Eol True or False XBlock"
     )
 
     texto_verdadero = String(
