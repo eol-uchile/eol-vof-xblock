@@ -338,7 +338,10 @@ class VoFXBlock(XBlock):
         """
         Mostrar las respuestas
         """
-        return {'preguntas': self.preguntas}
+        if (self.attempts >= self.max_attempts and self.show_answer == 'Finalizado') or self.show_answer == 'Mostrar':
+            return {'preguntas': self.preguntas}
+        else:
+            return {}
 
 
     @XBlock.json_handler
