@@ -18,6 +18,7 @@ function VoFEditBlock(runtime, element) {
         display_name: $(element).find('input[name=display_name]').val(),
         texto_verdadero: $(element).find('input[name=texto_verdadero]').val(),
         texto_falso: $(element).find('input[name=texto_falso]').val(),
+        texto_header: $(element).find('input[name=texto_header]').val(),
         weight: $(element).find('input[name=weight]').val(),
         nro_de_intentos: $(element).find('input[name=nro_de_intentos]').val(),
         show_answers: $(element).find('select.show_answers').val(),
