@@ -43,6 +43,13 @@ class VoFXBlock(XBlock):
         default="F"
     )
 
+    texto_header = String(
+        display_name="Header",
+        help="Texto de cabecera si es que se necesita",
+        scope=Scope.settings,
+        default=""
+    )
+
     texto_correcto = String(
         display_name="Falso",
         help="Texto que aparece al tener todas buenas",
@@ -182,6 +189,7 @@ class VoFXBlock(XBlock):
                 'theme': self.theme,
                 'texto_verdadero': self.texto_verdadero,
                 'texto_falso': self.texto_falso,
+                'texto_header': self.texto_header,
                 'texto_correcto': self.texto_correcto,
                 'texto_incorrecto': self.texto_incorrecto,
                 'texto_intentos': texto_intentos,
@@ -230,6 +238,7 @@ class VoFXBlock(XBlock):
                 'location': self.location,
                 'texto_verdadero': self.texto_verdadero,
                 'texto_falso': self.texto_falso,
+                'texto_header': self.texto_header,
                 'weight': self.weight,
                 'show_answers': self.show_answer,
                 'theme': self.theme,
@@ -361,6 +370,7 @@ class VoFXBlock(XBlock):
         self.display_name = data.get('display_name')
         self.texto_verdadero = data.get('texto_verdadero')
         self.texto_falso = data.get('texto_falso')
+        self.texto_header = data.get('texto_header')
         self.theme = data.get('theme')
         self.show_answer = data.get('show_answers')
         if data.get('weight') >= 0:

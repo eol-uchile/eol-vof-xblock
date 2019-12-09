@@ -15,7 +15,9 @@
     {% endif %}
     {% if theme == 'Media' %}
       <div class="dtrow first">
-        <div class="dtcell1 first"></div>
+        <div class="dtcell1 first" style="text-align:center;">
+            <strong>{{ texto_header|safe }}</strong>
+        </div>
         <div class="dtcell3 first">
             {{ texto_verdadero }}
         </div>
@@ -49,13 +51,17 @@
                             </div>
                           </div>
                       </div>
-                    <!--
-                    <p>{{value.enunciado}}</p>
-                    {{ texto_verdadero }}<input type="radio" class="radiovof" name="{{ key }}" value="verdadero"/>
-                    {{ texto_falso }}<input type="radio" class="radiovof" name="{{ key }}" value="falso"/>
-                    -->
       {% endfor %}
-    {% else %}
+    {% else %}<!--tema no es media-->
+      {% if texto_header != '' %}
+      <div class="dtrow">
+          <div class="dtcell1" style="text-align: center;"><strong>{{ texto_header|safe }}</strong></div>
+          <div class="dtcell3">
+          </div>
+          <div class="dtcell2">
+          </div>
+      </div>
+      {% endif %}
       {% for key, value in preguntas %}
                       <div class="dtrow">
                           <div class="dtcell1">{{value.enunciado|safe}}</div>
@@ -70,11 +76,6 @@
                             </div>
                           </div>
                       </div>
-                    <!--
-                    <p>{{value.enunciado}}</p>
-                    {{ texto_verdadero }}<input type="radio" class="radiovof" name="{{ key }}" value="verdadero"/>
-                    {{ texto_falso }}<input type="radio" class="radiovof" name="{{ key }}" value="falso"/>
-                    -->
       {% endfor %}
     {% endif %}
     </div>
