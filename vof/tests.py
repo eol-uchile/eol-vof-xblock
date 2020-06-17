@@ -69,13 +69,13 @@ class VoFXblockTestCase(unittest.TestCase):
         request.method = 'POST'
 
         data = json.dumps({'respuestas': [{'name': '1', 'value': 'verdadero'}]})
-        request.body = data
+        request.body = data.encode('utf-8')
         response = self.xblock.responder(request)
         self.assertEqual(response.json_body['indicator_class'], 'incorrect')
         self.assertEqual(response.json_body['intentos'], 1)
 
         data = json.dumps({'respuestas': [{'name': '1', 'value': 'falso'}, {'name': '2', 'value': 'falso'}]})
-        request.body = data
+        request.body = data.encode('utf-8')
         response = self.xblock.responder(request)
         self.assertEqual(response.json_body['indicator_class'], 'incorrect')
         self.assertEqual(response.json_body['intentos'], 2)
@@ -86,13 +86,13 @@ class VoFXblockTestCase(unittest.TestCase):
         request.method = 'POST'
 
         data = json.dumps({'respuestas': [{'name': '1', 'value': 'falso'}, {'name': '2', 'value': 'verdadero'}]})
-        request.body = data
+        request.body = data.encode('utf-8')
         response = self.xblock.responder(request)
         self.assertEqual(response.json_body['indicator_class'], 'incorrect')
         self.assertEqual(response.json_body['intentos'], 1)
 
         data = json.dumps({'respuestas': [{'name': '1', 'value': 'verdadero'}, {'name': '2', 'value': 'falso'}]})
-        request.body = data
+        request.body = data.encode('utf-8')
         response = self.xblock.responder(request)
         self.assertEqual(response.json_body['indicator_class'], 'correct')
         self.assertEqual(response.json_body['intentos'], 2)
@@ -107,7 +107,7 @@ class VoFXblockTestCase(unittest.TestCase):
                                         {'id': '2', 'enunciado':'pregunta verdadera 2', 'valor': 'V'},
                                         {'id': '3', 'enunciado':'pregunta falsa', 'valor': 'F'}
                                         ]})
-        request.body = data
+        request.body = data.encode('utf-8')
         response = self.xblock.studio_submit(request)
         self.assertEqual(response.json_body['result'], 'success')
         preguntas = {'1': {'valor': True, 'enunciado': 'pregunta verdadera'}, '2': {'valor': True, 'enunciado': 'pregunta verdadera 2'}, '3': {'valor': False, 'enunciado': 'pregunta falsa'}}
@@ -124,7 +124,7 @@ class VoFXblockTestCase(unittest.TestCase):
                                         {'id': '3', 'enunciado':'pregunta falsa', 'valor': 'F'}
                                         ],
                             'nro_de_intentos':4})
-        request.body = data
+        request.body = data.encode('utf-8')
         response = self.xblock.studio_submit(request)
 
         #pruebo respuestas buenas y malas con el problema con nuevas preguntas
@@ -132,25 +132,25 @@ class VoFXblockTestCase(unittest.TestCase):
         request.method = 'POST'
 
         data = json.dumps({'respuestas': [{'name': '1', 'value': 'verdadero'}]})
-        request.body = data
+        request.body = data.encode('utf-8')
         response = self.xblock.responder(request)
         self.assertEqual(response.json_body['indicator_class'], 'incorrect')
         self.assertEqual(response.json_body['intentos'], 1)
 
         data = json.dumps({'respuestas': [{'name': '1', 'value': 'falso'}, {'name': '2', 'value': 'falso'}]})
-        request.body = data
+        request.body = data.encode('utf-8')
         response = self.xblock.responder(request)
         self.assertEqual(response.json_body['indicator_class'], 'incorrect')
         self.assertEqual(response.json_body['intentos'], 2)
 
         data = json.dumps({'respuestas': [{'name': '1', 'value': 'falso'}, {'name': '2', 'value': 'verdadero'}, {'name': '3', 'value': 'verdadero'}]})
-        request.body = data
+        request.body = data.encode('utf-8')
         response = self.xblock.responder(request)
         self.assertEqual(response.json_body['indicator_class'], 'incorrect')
         self.assertEqual(response.json_body['intentos'], 3)
 
         data = json.dumps({'respuestas': [{'name': '1', 'value': 'verdadero'}, {'name': '2', 'value': 'verdadero'}, {'name': '3', 'value': 'falso'}]})
-        request.body = data
+        request.body = data.encode('utf-8')
         response = self.xblock.responder(request)
         self.assertEqual(response.json_body['indicator_class'], 'correct')
         self.assertEqual(response.json_body['intentos'], 4)

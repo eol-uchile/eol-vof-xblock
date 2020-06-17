@@ -54,21 +54,21 @@ class VoFXBlock(XBlock):
         display_name="Falso",
         help="Texto que aparece al tener todas buenas",
         scope=Scope.settings,
-        default=str("¡Respuesta Correcta!","utf8"),
+        default="¡Respuesta Correcta!",
     )
 
     texto_incorrecto = String(
         display_name="Falso",
         help="Texto que aparece cuando tienes todas malas",
         scope=Scope.settings,
-        default=str("Respuesta Incorrecta","utf8")
+        default="Respuesta Incorrecta",
     )
 
     texto_parcial = String(
         display_name="Falso",
         help="Texto que aparece cuando tienes una buena pero no el total",
         scope=Scope.settings,
-        default=str("Respuesta parcialmente correcta","utf8")
+        default="Respuesta parcialmente correcta",
     )
 
     #preguntas
@@ -373,10 +373,10 @@ class VoFXBlock(XBlock):
         self.texto_header = data.get('texto_header')
         self.theme = data.get('theme')
         self.show_answer = data.get('show_answers')
-        if data.get('weight') >= 0:
-            self.weight = data.get('weight')
-        if data.get('nro_de_intentos') > 0:
-            self.max_attempts = data.get('nro_de_intentos')
+        if data.get('weight') and int(data.get('weight')) >= 0:
+            self.weight = int(data.get('weight'))
+        if data.get('nro_de_intentos') and int(data.get('nro_de_intentos')) > 0:
+            self.max_attempts = int(data.get('nro_de_intentos'))
         self.preguntas = nuevas_pregs
     
         return {'result': 'success'}
