@@ -173,7 +173,7 @@ class VoFXBlock(XBlock):
         texto_intentos = ''
         no_mas_intentos = False
 
-        if self.max_attempts > 0:
+        if self.max_attempts and self.max_attempts > 0:
             texto_intentos = "Has realizado "+str(self.attempts)+" de "+str(self.max_attempts)+" intentos"
             if self.attempts >= self.max_attempts:
                 no_mas_intentos = True
