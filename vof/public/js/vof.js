@@ -115,7 +115,7 @@ function VoFXBlock(runtime, element, settings) {
     var handlerUrlVerResp = runtime.handlerUrl(element, 'mostrar_respuesta');
 
     botonesVoF.click(function(eventObject) {
-        if(statusDiv.hasClass("unanswered")){
+        if(statusDiv.hasClass("unanswered") && !settings.is_past_due){
             buttonCheck.attr("disabled", false);
         }
         eventObject.preventDefault();
