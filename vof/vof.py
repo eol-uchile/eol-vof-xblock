@@ -108,7 +108,7 @@ class VoFXBlock(XBlock):
     max_attempts = Integer(
         display_name='Nro. de Intentos',
         help='Entero que representa cuantas veces se puede responder problema',
-        default=2,
+        default=3,
         values={'min': 0},
         scope=Scope.settings,
     )
