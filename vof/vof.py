@@ -108,7 +108,7 @@ class VoFXBlock(XBlock):
     max_attempts = Integer(
         display_name='Nro. de Intentos',
         help='Entero que representa cuantas veces se puede responder problema',
-        default=2,
+        default=None,
         values={'min': 0},
         scope=Scope.settings,
     )
@@ -267,7 +267,7 @@ class VoFXBlock(XBlock):
         Responder el V o F
         """
         #Reviso si no estoy haciendo trampa y contestando mas veces en paralelo
-        max_attempts_fixed = self.max_attempts if self.max_attempts else self.max_attempts + 1 # Fix max attempts None
+        max_attempts_fixed = self.max_attempts if self.max_attempts else self.attempts + 1 # Fix max attempts None
         if ((self.attempts + 1) <= max_attempts_fixed) or max_attempts_fixed <= 0:
             nuevas_resps = {}
             texto = self.texto_correcto
@@ -349,7 +349,7 @@ class VoFXBlock(XBlock):
         """
         Mostrar las respuestas
         """
-        max_attempts_fixed = self.max_attempts if self.max_attempts else self.max_attempts + 1 # Fix max attempts None
+        max_attempts_fixed = self.max_attempts if self.max_attempts else self.attempts + 1 # Fix max attempts None
         if (self.attempts >= max_attempts_fixed and self.show_answer == 'Finalizado') or self.show_answer == 'Mostrar':
             return {'preguntas': self.preguntas}
         else:
