@@ -9,6 +9,7 @@ from xblock.core import XBlock
 from django.db import IntegrityError
 from django.template.context import Context
 from xblock.fields import Integer, String, Dict, Scope, Float, Boolean
+from xmodule.fields import Date
 from xblockutils.resources import ResourceLoader
 from xblock.fragment import Fragment
 import datetime
@@ -130,6 +131,10 @@ class VoFXBlock(XBlock):
         scope = Scope.settings
     )
 
+    last_submission_time = Date(
+        help= "Last submission time",
+        scope=Scope.user_state)
+
     has_score = True
 
     icon_class = "problem"
@@ -175,7 +180,9 @@ class VoFXBlock(XBlock):
         no_mas_intentos = False
 
         if self.max_attempts and self.max_attempts > 0:
-            texto_intentos = "Has realizado "+str(self.attempts)+" de "+str(self.max_attempts)+" intentos"
+            texto_intentos = "Ha realizado "+str(self.attempts)+" de "+str(self.max_attempts)+" intentos"
+            if self.max_attempts == 1:
+                texto_intentos = "Ha realizado "+str(self.attempts)+" de "+str(self.max_attempts)+" intento"
             if self.attempts >= self.max_attempts:
                 no_mas_intentos = True
 
@@ -324,6 +331,8 @@ class VoFXBlock(XBlock):
             #status respuesta
             indicator_class = self.get_indicator_class()
 
+            self.last_submission_time = datetime.datetime.now(utc)
+
             return {
                     'texto':texto,
                     'score':self.score,
@@ -331,7 +340,8 @@ class VoFXBlock(XBlock):
                     'intentos': self.attempts, 
                     'indicator_class':indicator_class,
                     'show_correctness': self.get_show_correctness(),
-                    'show_answers': self.show_answer 
+                    'show_answers': self.show_answer,
+                    'last_submission_time': self.last_submission_time.isoformat()
                     }
         else:
             return {
@@ -341,7 +351,8 @@ class VoFXBlock(XBlock):
                     'intentos': self.attempts, 
                     'indicator_class': self.get_indicator_class(),
                     'show_correctness': self.get_show_correctness(),
-                    'show_answers': self.show_answer 
+                    'show_answers': self.show_answer,
+                    'last_submission_time': self.last_submission_time
                     }
     
     @XBlock.json_handler
