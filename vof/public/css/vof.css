@@ -432,6 +432,7 @@
 .vof_block.RedFid .tablagrande .dtcell1.first{
     /*background-color: #F0F0F1;*/
     border-top:none;
+    color: #282828;
 }
 
 .vof_block.RedFid .tablagrande .dtcell3{
