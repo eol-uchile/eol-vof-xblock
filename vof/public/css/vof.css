@@ -410,6 +410,7 @@
     border-radius: 16px;
 }
 
+
 .vof_block.RedFid .tablagrande .dtcell2.first{
     text-align:center!important;
     font-size: 18px;
@@ -438,14 +439,17 @@
 .vof_block.RedFid .tablagrande .dtcell3{
     border-right: 3px solid #D3D3D3;
     border-top: 3px solid #D3D3D3;
+    color: #282828;
 }
 .vof_block.RedFid .tablagrande .dtcell1{
     border-right: 3px solid #D3D3D3;
     border-top: 3px solid #D3D3D3;
+    color: #282828;
 }
 
 .vof_block.RedFid .tablagrande .dtcell2{
     border-top: 3px solid #D3D3D3;
+    color: #282828;
 }
 
 .vof_block.RedFid .tablagrande [class^=dtrow]:first-child [class^=dtcell1]:first-child{border-radius: 13px 0 0 0; border-color: #D3D3D3;}
