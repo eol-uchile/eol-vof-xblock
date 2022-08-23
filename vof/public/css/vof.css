@@ -467,7 +467,7 @@
 }
 
 .vof_block.RedFid .circle {
-    border: 2px solid #D3D3D3;
+    border: 2px solid #282828;
     border-radius: 50%;
     width:20px;
     height:20px;
@@ -475,7 +475,7 @@
 }
   
 .vof_block.RedFid .small-circle{
-    border: 1px solid #282828;
+    border: 1px solid #D3D3D3;
     border-radius: 50%;
     top: 25%;
     left: 25%;
