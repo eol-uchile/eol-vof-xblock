@@ -399,3 +399,108 @@
     outline: solid 2px #268800;
 }
 
+
+
+/* CSS RedFid Theme */
+
+.vof_block.RedFid .tablagrande{
+    border-spacing: 0px;
+    border: 4px solid #D3D3D3;
+    border-radius: 16px;
+}
+
+.vof_block.RedFid .tablagrande .dtcell2.first{
+    text-align:center!important;
+    font-size: 18px;
+    /*background-color: #F0F0F1;*/
+    color: #464646;
+    font-weight: 600;
+    width:130px;
+    border-top:none;
+}
+
+.vof_block.RedFid .tablagrande .dtcell3.first{
+    text-align:center!important;
+    font-size: 18px;
+    /*background-color: #F0F0F1;*/
+    color: #464646;
+    font-weight: 600;
+    width:130px;
+    border-top:none;
+}
+.vof_block.RedFid .tablagrande .dtcell1.first{
+    /*background-color: #F0F0F1;*/
+    border-top:none;
+}
+
+.vof_block.RedFid .tablagrande .dtcell3{
+    border-right: 2px solid #D3D3D3;
+    border-top: 2px solid #D3D3D3;
+}
+.vof_block.RedFid .tablagrande .dtcell1{
+    border-right: 2px solid #D3D3D3;
+    border-top: 2px solid #D3D3D3;
+}
+
+.vof_block.RedFid .tablagrande .dtcell2{
+    border-top: 2px solid #D3D3D3;
+}
+
+.vof_block.RedFid .tablagrande [class^=dtrow]:first-child [class^=dtcell1]:first-child{border-radius: 16px 0 0 0;}
+.vof_block.RedFid .tablagrande [class^=dtrow]:first-child [class^=dtcell2]:last-child{border-radius: 0 16px 0 0;}
+.vof_block.RedFid .tablagrande [class^=dtrow]:last-child [class^=dtcell1]:first-child{border-radius: 0 0 0 16px;}
+.vof_block.RedFid .tablagrande [class^=dtrow]:last-child [class^=dtcell2]:last-child{border-radius: 0 0 16px 0;}
+.vof_block.RedFid .tablagrande [class^=dtrow]:only-child [class^=dtcell1]:first-child{border-radius: 16px 0 0 16px;}
+.vof_block.RedFid .tablagrande [class^=dtrow]:only-child [class^=dtcell2]:last-child{border-radius: 0 16px 16px 0;}
+
+.vof_block.RedFid .tablagrande .dtrow [class^=dtcell]{
+    padding: 0px 25px;
+}
+.vof_block.RedFid .tablagrande .dtrow.first [class^=dtcell]{
+    padding: 10px 25px; 
+}
+
+.vof_block.RedFid .circle {
+    border: 2px solid #59595B;
+    border-radius: 50%;
+    width:20px;
+    height:20px;
+    position:relative;
+}
+  
+.vof_block.RedFid .small-circle{
+    border: 1px solid #D3D3D3;
+    border-radius: 50%;
+    top: 25%;
+    left: 25%;
+    width: 8px;
+    height: 8px;
+    position: absolute;
+}
+
+.vof_block.RedFid .opcV { 
+    background-color: transparent;
+    padding:30px;
+}
+
+.vof_block.RedFid .opcF { 
+    background-color: transparent;
+    padding:31px;
+}
+
+.vof_block.RedFid .selv .small-circle {
+    background-color: #69b42c;
+}
+
+.vof_block.RedFid .self .small-circle {
+    background-color: #ea6c00;
+}
+
+.vof_block.RedFid .cuadroverde{
+    outline: 0px;
+}
+
+.vof_block.RedFid .cuadroverde .circle{
+    outline: solid 2px #268800;
+}
+
