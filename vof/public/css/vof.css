@@ -403,9 +403,10 @@
 
 /* CSS RedFid Theme */
 
+
 .vof_block.RedFid .tablagrande{
     border-spacing: 0px;
-    border: 4px solid #D3D3D3;
+    border: 3px solid #D3D3D3;
     border-radius: 16px;
 }
 
@@ -413,7 +414,7 @@
     text-align:center!important;
     font-size: 18px;
     /*background-color: #F0F0F1;*/
-    color: #464646;
+    color: #282828;
     font-weight: 600;
     width:130px;
     border-top:none;
@@ -423,7 +424,7 @@
     text-align:center!important;
     font-size: 18px;
     /*background-color: #F0F0F1;*/
-    color: #464646;
+    color: #282828;
     font-weight: 600;
     width:130px;
     border-top:none;
@@ -434,16 +435,16 @@
 }
 
 .vof_block.RedFid .tablagrande .dtcell3{
-    border-right: 2px solid #D3D3D3;
-    border-top: 2px solid #D3D3D3;
+    border-right: 3px solid #D3D3D3;
+    border-top: 3px solid #D3D3D3;
 }
 .vof_block.RedFid .tablagrande .dtcell1{
-    border-right: 2px solid #D3D3D3;
-    border-top: 2px solid #D3D3D3;
+    border-right: 3px solid #D3D3D3;
+    border-top: 3px solid #D3D3D3;
 }
 
 .vof_block.RedFid .tablagrande .dtcell2{
-    border-top: 2px solid #D3D3D3;
+    border-top: 3px solid #D3D3D3;
 }
 
 .vof_block.RedFid .tablagrande [class^=dtrow]:first-child [class^=dtcell1]:first-child{border-radius: 16px 0 0 0;}
@@ -461,7 +462,7 @@
 }
 
 .vof_block.RedFid .circle {
-    border: 2px solid #59595B;
+    border: 2px solid #282828;
     border-radius: 50%;
     width:20px;
     height:20px;
