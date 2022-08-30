@@ -383,12 +383,12 @@
     padding:31px;
 }
 
-.vof_block.RedFid .selv .small-circle {
-    background-color: #69b42c;
+.vof_block.RedFid .selv .circle {
+    background-color: #606CDD;
 }
 
-.vof_block.RedFid .self .small-circle {
-    background-color: #ea6c00;
+.vof_block.RedFid .self .circle {
+    background-color: #AD65DB;
 }
 
 .vof_block.RedFid .cuadroverde{
