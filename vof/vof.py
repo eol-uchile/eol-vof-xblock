@@ -9,6 +9,7 @@ from xblock.core import XBlock
 from django.db import IntegrityError
 from django.template.context import Context
 from xblock.fields import Integer, String, Dict, Scope, Float, Boolean
+from xmodule.fields import Date
 from xblockutils.resources import ResourceLoader
 from xblock.fragment import Fragment
 import datetime
@@ -54,21 +55,21 @@ class VoFXBlock(XBlock):
         display_name="Falso",
         help="Texto que aparece al tener todas buenas",
         scope=Scope.settings,
-        default=unicode("¡Respuesta Correcta!","utf8"),
+        default="¡Respuesta Correcta!",
     )
 
     texto_incorrecto = String(
         display_name="Falso",
         help="Texto que aparece cuando tienes todas malas",
         scope=Scope.settings,
-        default=unicode("Respuesta Incorrecta","utf8")
+        default="Respuesta Incorrecta",
     )
 
     texto_parcial = String(
         display_name="Falso",
         help="Texto que aparece cuando tienes una buena pero no el total",
         scope=Scope.settings,
-        default=unicode("Respuesta parcialmente correcta","utf8")
+        default="Respuesta parcialmente correcta",
     )
 
     #preguntas
@@ -88,7 +89,7 @@ class VoFXBlock(XBlock):
         display_name = "Estilo",
         help = "Cambiar estilo de la pregunta",
         default = "SumaySigue",
-        values = ["SumaySigue", "Media"],
+        values = ["SumaySigue", "Media","RedFid"],
         scope = Scope.settings
     )
     
@@ -130,6 +131,10 @@ class VoFXBlock(XBlock):
         scope = Scope.settings
     )
 
+    last_submission_time = Date(
+        help= "Last submission time",
+        scope=Scope.user_state)
+
     has_score = True
 
     icon_class = "problem"
@@ -158,7 +163,8 @@ class VoFXBlock(XBlock):
             url = self.runtime.local_resource_url(self, item)
             fragment.add_javascript_url(url)
         settings = {
-            'image_path': self.runtime.local_resource_url(self, 'public/images/')
+            'image_path': self.runtime.local_resource_url(self, 'public/images/'),
+            'is_past_due': self.get_is_past_due()
         }
         fragment.initialize_js(initialize_js_func, json_args=settings)
         return fragment
@@ -168,13 +174,15 @@ class VoFXBlock(XBlock):
         Vista estudiante
         """
         #Tuve que pasar las preguntas a una lista para ordenarlas, TO DO: pasar a listas o ver que es mas eficiente
-        lista_pregs = [ [k,v] for k, v in self.preguntas.items() ]
+        lista_pregs = [ [k,v] for k, v in list(self.preguntas.items()) ]
         lista_pregs = sorted(lista_pregs, key=lambda x: int(x[0]))
         texto_intentos = ''
         no_mas_intentos = False
 
-        if self.max_attempts > 0:
-            texto_intentos = "Has realizado "+str(self.attempts)+" de "+str(self.max_attempts)+" intentos"
+        if self.max_attempts and self.max_attempts > 0:
+            texto_intentos = "Ha realizado "+str(self.attempts)+" de "+str(self.max_attempts)+" intentos"
+            if self.max_attempts == 1:
+                texto_intentos = "Ha realizado "+str(self.attempts)+" de "+str(self.max_attempts)+" intento"
             if self.attempts >= self.max_attempts:
                 no_mas_intentos = True
 
@@ -201,7 +209,7 @@ class VoFXBlock(XBlock):
                 'problem_progress': self.get_problem_progress(),
                 'indicator_class': indicator_class,
                 'image_path' : self.runtime.local_resource_url(self, 'public/images/'),
-                'location': unicode(self.location).split('@')[-1],
+                'location': str(self.location).split('@')[-1],
                 'show_correctness': self.get_show_correctness(),
                 'is_past_due': self.get_is_past_due
             }
@@ -228,7 +236,7 @@ class VoFXBlock(XBlock):
         Create a fragment used to display the edit view in the Studio.
         """
         #Tuve que pasar las preguntas a una lista para ordenarlas
-        lista_pregs = [ [k,v] for k, v in self.preguntas.items() ]
+        lista_pregs = [ [k,v] for k, v in list(self.preguntas.items()) ]
         lista_pregs = sorted(lista_pregs, key=lambda x: int(x[0]))
 
         context.update(
@@ -266,7 +274,8 @@ class VoFXBlock(XBlock):
         Responder el V o F
         """
         #Reviso si no estoy haciendo trampa y contestando mas veces en paralelo
-        if ((self.attempts + 1) <= self.max_attempts) or self.max_attempts <= 0:
+        max_attempts_fixed = self.max_attempts if self.max_attempts else self.attempts + 1 # Fix max attempts None
+        if ((self.attempts + 1) <= max_attempts_fixed) or max_attempts_fixed <= 0:
             nuevas_resps = {}
             texto = self.texto_correcto
             buenas = 0.0
@@ -322,6 +331,8 @@ class VoFXBlock(XBlock):
             #status respuesta
             indicator_class = self.get_indicator_class()
 
+            self.last_submission_time = datetime.datetime.now(utc)
+
             return {
                     'texto':texto,
                     'score':self.score,
@@ -329,17 +340,19 @@ class VoFXBlock(XBlock):
                     'intentos': self.attempts, 
                     'indicator_class':indicator_class,
                     'show_correctness': self.get_show_correctness(),
-                    'show_answers': self.show_answer 
+                    'show_answers': self.show_answer,
+                    'last_submission_time': self.last_submission_time.isoformat()
                     }
         else:
             return {
-                    'texto': unicode('Error: El estado de este problema fue modificado, por favor recargue la página.','utf8'),
+                    'texto': str('Error: El estado de este problema fue modificado, por favor recargue la página.','utf8'),
                     'score':self.score,
                     'nro_de_intentos': self.max_attempts,
                     'intentos': self.attempts, 
                     'indicator_class': self.get_indicator_class(),
                     'show_correctness': self.get_show_correctness(),
-                    'show_answers': self.show_answer 
+                    'show_answers': self.show_answer,
+                    'last_submission_time': self.last_submission_time
                     }
     
     @XBlock.json_handler
@@ -347,7 +360,8 @@ class VoFXBlock(XBlock):
         """
         Mostrar las respuestas
         """
-        if (self.attempts >= self.max_attempts and self.show_answer == 'Finalizado') or self.show_answer == 'Mostrar':
+        max_attempts_fixed = self.max_attempts if self.max_attempts else self.attempts + 1 # Fix max attempts None
+        if (self.attempts >= max_attempts_fixed and self.show_answer == 'Finalizado') or self.show_answer == 'Mostrar':
             return {'preguntas': self.preguntas}
         else:
             return {}
@@ -373,10 +387,10 @@ class VoFXBlock(XBlock):
         self.texto_header = data.get('texto_header')
         self.theme = data.get('theme')
         self.show_answer = data.get('show_answers')
-        if data.get('weight') >= 0:
-            self.weight = data.get('weight')
-        if data.get('nro_de_intentos') > 0:
-            self.max_attempts = data.get('nro_de_intentos')
+        if data.get('weight') and int(data.get('weight')) >= 0:
+            self.weight = int(data.get('weight'))
+        if data.get('nro_de_intentos') and int(data.get('nro_de_intentos')) > 0:
+            self.max_attempts = int(data.get('nro_de_intentos'))
         self.preguntas = nuevas_pregs
     
         return {'result': 'success'}

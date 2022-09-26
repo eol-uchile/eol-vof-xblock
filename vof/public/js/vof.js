@@ -70,7 +70,13 @@ function VoFXBlock(runtime, element, settings) {
         //desactivo el boton si es que se supero el nro de intentos
         var finalice = false;
         if(result.nro_de_intentos > 0){
-            subFeedback.text('Has realizado '+result.intentos+' de '+result.nro_de_intentos+' intentos');
+            if(result.nro_de_intentos == 1){
+                subFeedback.text('Ha realizado '+result.intentos+' de '+result.nro_de_intentos+' intento');
+            }
+            else{
+                subFeedback.text('Ha realizado '+result.intentos+' de '+result.nro_de_intentos+' intentos');
+            }
+
             if(result.intentos >= result.nro_de_intentos){
                 buttonCheck.attr("disabled", true);
                 $element.find('.tablagrande').addClass('noclick');
@@ -115,7 +121,7 @@ function VoFXBlock(runtime, element, settings) {
     var handlerUrlVerResp = runtime.handlerUrl(element, 'mostrar_respuesta');
 
     botonesVoF.click(function(eventObject) {
-        if(statusDiv.hasClass("unanswered")){
+        if(statusDiv.hasClass("unanswered") && !settings.is_past_due){
             buttonCheck.attr("disabled", false);
         }
         eventObject.preventDefault();
