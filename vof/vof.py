@@ -89,7 +89,7 @@ class VoFXBlock(XBlock):
         display_name = "Estilo",
         help = "Cambiar estilo de la pregunta",
         default = "SumaySigue",
-        values = ["SumaySigue", "Media"],
+        values = ["SumaySigue", "Media","RedFid"],
         scope = Scope.settings
     )
     
