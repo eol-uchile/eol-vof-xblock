@@ -226,7 +226,7 @@ class VoFXBlock(XBlock):
                 'public/css/vof.css',
             ],
             additional_js=[
-                'public/js/vof.js',
+                'public/js/vof.js'
             ],
         )
         return frag
