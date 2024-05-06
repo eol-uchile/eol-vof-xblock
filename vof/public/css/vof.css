@@ -259,16 +259,6 @@
     height:20px;
     position:relative;
 }
-  
-.vof_block.Media .small-circle{
-    border: 2px solid #59595B;
-    border-radius: 50%;
-    top: 25%;
-    left: 25%;
-    width: 8px;
-    height: 8px;
-    position: absolute;
-}
 
 .vof_block.Media .opcV { 
     background-color: transparent;
@@ -280,11 +270,11 @@
     padding:31px;
 }
 
-.vof_block.Media .selv .small-circle {
+.vof_block.Media .selv .circle {
     background-color: #69b42c;
 }
 
-.vof_block.Media .self .small-circle {
+.vof_block.Media .self .circle {
     background-color: #ea6c00;
 }
 
@@ -363,16 +353,6 @@
     position:relative;
 }
   
-.vof_block.RedFid .small-circle{
-    border: 1px solid #59595B;
-    border-radius: 50%;
-    top: 25%;
-    left: 25%;
-    width: 8px;
-    height: 8px;
-    position: absolute;
-}
-
 .vof_block.RedFid .opcV { 
     background-color: transparent;
     padding:30px;
