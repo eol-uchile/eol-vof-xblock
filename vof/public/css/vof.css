@@ -378,3 +378,96 @@
 .vof_block.RedFid .cuadroverde .circle{
     outline: solid 2px #268800;
 }
+
+/* CSS Sumo Primero Theme */
+
+.vof_block.SumoPrimero .tablagrande{
+    border-spacing: 0px;
+    border: 2px solid #858586;
+    border-radius: 16px;
+}
+
+.vof_block.SumoPrimero .tablagrande .dtcell2.first{
+    text-align:center!important;
+    font-size: 18px;
+    /*background-color: #F0F0F1;*/
+    color: #464646;
+    font-weight: 600;
+    width:130px;
+    border-top:none;
+}
+
+.vof_block.SumoPrimero .tablagrande .dtcell3.first{
+    text-align:center!important;
+    font-size: 18px;
+    /*background-color: #F0F0F1;*/
+    color: #464646;
+    font-weight: 600;
+    width:130px;
+    border-top:none;
+}
+.vof_block.SumoPrimero .tablagrande .dtcell1.first{
+    /*background-color: #F0F0F1;*/
+    border-top:none;
+}
+
+.vof_block.SumoPrimero .tablagrande .dtcell3{
+    border-right: 2px solid #707070;
+    border-top: 2px solid #707070;
+}
+.vof_block.SumoPrimero .tablagrande .dtcell1{
+    border-right: 2px solid #707070;
+    border-top: 2px solid #707070;
+}
+
+.vof_block.SumoPrimero .tablagrande .dtcell2{
+    border-top: 2px solid #707070;
+}
+
+.vof_block.SumoPrimero .tablagrande [class^=dtrow]:first-child [class^=dtcell1]:first-child{border-radius: 16px 0 0 0;}
+.vof_block.SumoPrimero .tablagrande [class^=dtrow]:first-child [class^=dtcell2]:last-child{border-radius: 0 16px 0 0;}
+.vof_block.SumoPrimero .tablagrande [class^=dtrow]:last-child [class^=dtcell1]:first-child{border-radius: 0 0 0 16px;}
+.vof_block.SumoPrimero .tablagrande [class^=dtrow]:last-child [class^=dtcell2]:last-child{border-radius: 0 0 16px 0;}
+.vof_block.SumoPrimero .tablagrande [class^=dtrow]:only-child [class^=dtcell1]:first-child{border-radius: 16px 0 0 16px;}
+.vof_block.SumoPrimero .tablagrande [class^=dtrow]:only-child [class^=dtcell2]:last-child{border-radius: 0 16px 16px 0;}
+
+.vof_block.SumoPrimero .tablagrande .dtrow [class^=dtcell]{
+    padding: 0px 25px;
+}
+.vof_block.SumoPrimero .tablagrande .dtrow.first [class^=dtcell]{
+    padding: 10px 25px; 
+}
+
+.vof_block.SumoPrimero .circle {
+    border: 2px solid #59595B;
+    border-radius: 50%;
+    width:20px;
+    height:20px;
+    position:relative;
+}
+  
+.vof_block.SumoPrimero .opcV { 
+    background-color: transparent;
+    padding:30px;
+}
+
+.vof_block.SumoPrimero .opcF { 
+    background-color: transparent;
+    padding:31px;
+}
+
+.vof_block.SumoPrimero .selv .circle {
+    background-color: #41b9bb;
+}
+
+.vof_block.SumoPrimero .self .circle {
+    background-color: #c12bb2;
+}
+
+.vof_block.SumoPrimero .cuadroverde{
+    outline: 0px;
+}
+
+.vof_block.SumoPrimero .cuadroverde .circle{
+    outline: solid 2px #268800;
+}
