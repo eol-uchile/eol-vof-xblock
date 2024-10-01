@@ -198,7 +198,25 @@ function VoFXBlock(runtime, element, settings) {
       });
 
     $(function ($) {
-        //console.log("Vof Actualiza");
-        MathJax.Hub.Queue(["Typeset", MathJax.Hub]); //Reconstruir latex
+        console.log("Vof Actualiza");
+
+        var vofid = "vof_" + settings.location;
+        //console.log(vofid);
+        renderMathForSpecificElements(vofid);
     });
+
+    function renderMathForSpecificElements(id) {
+        //console.log("Render mathjax in " + id)
+        if (typeof MathJax !== "undefined") {
+            var $vof = $('#' + id);
+            if ($vof.length) {
+                $vof.find('.dtcell1','dtcell2','dtcell3','dtcell4').each(function (index, vofelem) {
+                    //console.log("encontrado "+ vofelem )
+                    MathJax.Hub.Queue(["Typeset", MathJax.Hub, vofelem]);
+                });
+            }
+        } else {
+            console.warn("MathJax no está cargado.");
+        }
+    }
 }

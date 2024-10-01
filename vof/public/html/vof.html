@@ -1,5 +1,5 @@
 {% load i18n %}
-<div class="problem vof_block {{theme}} problems-wrapper">
+<div class="problem vof_block {{theme}} problems-wrapper" id="vof_{{ location }}">
   <h3 class="vof-header problem-header">{{ display_name }}</h3>
   <div class="problem-progress">{{ problem_progress }}</div>
   {% if show_correctness != 'never'  or indicator_class == 'unanswered' %}
