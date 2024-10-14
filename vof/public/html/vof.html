@@ -1,5 +1,5 @@
 {% load i18n %}
-<div class="problem vof_block {{theme}} problems-wrapper">
+<div class="problem vof_block {{theme}} problems-wrapper" id="vof_{{ location }}">
   <h3 class="vof-header problem-header">{{ display_name }}</h3>
   <div class="problem-progress">{{ problem_progress }}</div>
   {% if show_correctness != 'never'  or indicator_class == 'unanswered' %}
@@ -82,6 +82,41 @@
               </div>
             </div>
         </div>
+      {% endfor %}
+    {% elif theme == 'SumoPrimero' %}
+    <div class="dtrow first">
+      <div class="dtcell1 first" style="text-align:center;">
+          <strong>{{ texto_header|safe }}</strong>
+      </div>
+      <div class="dtcell3 first">
+          {{ texto_verdadero }}
+      </div>
+      <div class="dtcell2 first">
+          {{ texto_falso }}
+      </div>
+    </div>
+    {% for key, value in preguntas %}
+      <div class="dtrow">
+          <div class="dtcell1">{{value.enunciado|safe}}</div>
+          <div class="dtcell3">
+              <div class="opcV opcV{{key}} opcion">
+                <div class="container">
+                  <div class="circle">
+                  </div>
+                </div>
+                <input type="radio" class="radiovof" pregunta-id="{{ key }}" name="{{ key }}_{{ location }}" value="verdadero"/>
+            </div>
+          </div>
+          <div class="dtcell2">
+              <div class="opcF opcF{{key}} opcion">
+                <div class="container">
+                  <div class="circle">
+                  </div>
+                </div>
+                <input type="radio" class="radiovof" pregunta-id="{{ key }}" name="{{ key }}_{{ location }}" value="falso"/>
+            </div>
+          </div>
+      </div>
       {% endfor %}
     {% else %}
       {% if texto_header != '' %}
