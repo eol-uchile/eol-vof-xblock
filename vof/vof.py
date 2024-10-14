@@ -164,7 +164,8 @@ class VoFXBlock(XBlock):
             fragment.add_javascript_url(url)
         settings = {
             'image_path': self.runtime.local_resource_url(self, 'public/images/'),
-            'is_past_due': self.get_is_past_due()
+            'is_past_due': self.get_is_past_due(),
+            'location': str(self.location).split('@')[-1]
         }
         fragment.initialize_js(initialize_js_func, json_args=settings)
         return fragment
