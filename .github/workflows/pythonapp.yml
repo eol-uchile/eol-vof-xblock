@@ -14,15 +14,6 @@ on:
     paths-ignore:
       - '.github/workflows/**'
 
-
 jobs:
   build:
-
-    runs-on: ubuntu-latest
-
-    steps:
-    - uses: actions/checkout@v4
-    - name: Run Tests
-      run: |
-        cd .github/
-        docker-compose run lms /openedx/requirements/eol-vof-xblock/.github/test.sh
+    uses: eol-uchile/eol_feedback/.github/workflows/pythonapp.yml@master
