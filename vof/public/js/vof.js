@@ -204,19 +204,19 @@ function VoFXBlock(runtime, element, settings) {
         //console.log(vofid);
         renderMathForSpecificElements(vofid);
     });
+}
 
-    function renderMathForSpecificElements(id) {
-        //console.log("Render mathjax in " + id)
-        if (typeof MathJax !== "undefined") {
-            var $vof = $('#' + id);
-            if ($vof.length) {
-                $vof.find('.dtcell1','dtcell2','dtcell3','dtcell4').each(function (index, vofelem) {
-                    //console.log("encontrado "+ vofelem )
-                    MathJax.Hub.Queue(["Typeset", MathJax.Hub, vofelem]);
-                });
-            }
-        } else {
-            console.warn("MathJax no está cargado.");
+function renderMathForSpecificElements(id) {
+    //console.log("Render mathjax in " + id)
+    if (typeof MathJax !== "undefined") {
+        var $vof = $('#' + id);
+        if ($vof.length) {
+            $vof.find('.dtcell1, .dtcell2, .dtcell3, .dtcell4').each(function (index, vofelem) {
+                //console.log("encontrado "+ vofelem )
+                MathJax.Hub.Queue(["Typeset", MathJax.Hub, vofelem]);
+            });
         }
+    } else {
+        console.warn("MathJax no está cargado.");
     }
 }
