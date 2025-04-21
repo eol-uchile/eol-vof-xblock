@@ -9,8 +9,52 @@ function VoFXBlock(runtime, element, settings) {
     var lasRespuestas = $element.find('.lasrespuestas');
     var subFeedback = $element.find('.submission-feedback');
     var statusDiv = $element.find('.status');
-
+    
+    // Add variables for state caching
+    var $xblocksContainer = $('#seq_content');
+    var xblockId = settings.location;
+    var cachedResponsesId = xblockId + '_vof_responses';
+    var cachedIndicatorClassId = xblockId + '_vof_indicator_class';
+    var cachedScoreId = xblockId + '_vof_score';
+    var cachedAttemptsId = xblockId + '_vof_attempts';
+    var cachedMaxAttemptsId = xblockId + '_vof_max_attempts';
+    var cachedShowCorrectnessId = xblockId + '_vof_show_correctness';
+    var cachedShowAnswerId = xblockId + '_vof_show_answers';
+    var cachedLastSubmissionTimeId = xblockId + '_vof_last_submission_time';
+    var cachedStateId = xblockId + '_vof_state';
+    
     function updateText(result) {
+        console.log('VOF updateText:', result);
+        
+        // Cache state for page navigation
+        $xblocksContainer.data(cachedIndicatorClassId, result.indicator_class);
+        $xblocksContainer.data(cachedScoreId, result.score);
+        $xblocksContainer.data(cachedAttemptsId, result.intentos);
+        $xblocksContainer.data(cachedMaxAttemptsId, result.nro_de_intentos);
+        $xblocksContainer.data(cachedShowCorrectnessId, result.show_correctness);
+        $xblocksContainer.data(cachedShowAnswerId, result.show_answers);
+        $xblocksContainer.data(cachedLastSubmissionTimeId, result.last_submission_time);
+        
+        // Save state of selected answers
+        var selectedResponses = {};
+        $element.find('.radiovof:checked').each(function() {
+            selectedResponses[$(this).attr('pregunta-id')] = $(this).val();
+        });
+        $xblocksContainer.data(cachedResponsesId, selectedResponses);
+        
+        // Save complete state object
+        $xblocksContainer.data(cachedStateId, {
+            indicator_class: result.indicator_class,
+            score: result.score,
+            intentos: result.intentos,
+            nro_de_intentos: result.nro_de_intentos,
+            show_correctness: result.show_correctness,
+            show_answers: result.show_answers,
+            last_submission_time: result.last_submission_time,
+            responses: selectedResponses,
+            texto: result.texto
+        });
+        
         //reviso si estoy mostrando correctitud
         if(result.show_correctness != 'never'){
             //actualizo el texto de correcto o incorrecto
@@ -120,6 +164,95 @@ function VoFXBlock(runtime, element, settings) {
     var handlerUrl = runtime.handlerUrl(element, 'responder');
     var handlerUrlVerResp = runtime.handlerUrl(element, 'mostrar_respuesta');
 
+    // Initialization: Check for cached state and restore if found
+    $(function ($) {
+        console.log("VOF XBlock initializing:", xblockId);
+        
+        // Check if we have cached state
+        if ($xblocksContainer.data(cachedStateId)) {
+            console.log("Found cached state for VOF XBlock:", xblockId);
+            var state = $xblocksContainer.data(cachedStateId);
+            console.log("Cached state:", state);
+            
+            // Restore visual state based on cached data
+            statusDiv.removeClass('correct incorrect unanswered');
+            statusDiv.addClass(state.indicator_class);
+            
+            // Restore selected answers
+            if (state.responses) {
+                $.each(state.responses, function(questionId, response) {
+                    if (response === 'verdadero') {
+                        $element.find('.opcV' + questionId).addClass('selv');
+                        $element.find('.opcF' + questionId).removeClass('self');
+                        $element.find('input[pregunta-id="' + questionId + '"][value="verdadero"]').prop('checked', true);
+                    } else if (response === 'falso') {
+                        $element.find('.opcF' + questionId).addClass('self');
+                        $element.find('.opcV' + questionId).removeClass('selv');
+                        $element.find('input[pregunta-id="' + questionId + '"][value="falso"]').prop('checked', true);
+                    }
+                });
+            }
+            
+            // Restore submission feedback
+            if (state.nro_de_intentos > 0) {
+                if (state.nro_de_intentos == 1) {
+                    subFeedback.text('Ha realizado ' + state.intentos + ' de ' + state.nro_de_intentos + ' intento');
+                } else {
+                    subFeedback.text('Ha realizado ' + state.intentos + ' de ' + state.nro_de_intentos + ' intentos');
+                }
+            }
+            
+            // Restore button state
+            if (state.intentos >= state.nro_de_intentos && state.nro_de_intentos > 0) {
+                buttonCheck.attr("disabled", true);
+                $element.find('.tablagrande').addClass('noclick');
+                
+                // Show "Ver Respuesta" button if needed
+                if (state.show_answers == 'Finalizado' && !$element.find('.ver_respuesta').length && state.show_correctness != 'never') {
+                    var mostrar_resp = '<button class="ver_respuesta" data-checking="Cargando..." data-value="Ver Respuesta">'
+                                    + '<span class="icon fa fa-info-circle" aria-hidden="true"></span></br>'
+                                    + '<span>Mostrar<br/>Respuesta</span>'
+                                    + '</button>';
+                    $element.find('.action').append(mostrar_resp);
+                    clickVerRespuesta();
+                }
+            }
+            
+            // Restore notification area based on score and show_correctness
+            if (state.show_correctness != 'never') {
+                if (state.score >= 1) {
+                    $element.find('.notificacion').html('');
+                    $element.find('.notificacion').removeClass('lineaarriba incorrecto dontshowcorrectness parcial');
+                    $element.find('.notificacion').addClass('correcto lineaarriba');
+                    $element.find('.notificacion.correcto').html('<img src="' + settings.image_path + 'correct-icon.png"/>' + state.texto);
+                    $element.find('.elticket').html('<img src="' + settings.image_path + 'correct-icon.png"/>');
+                } else if (state.score > 0) {
+                    $element.find('.notificacion').html('');
+                    $element.find('.notificacion').removeClass('lineaarriba correcto dontshowcorrectness');
+                    $element.find('.notificacion').addClass('incorrecto lineaarriba parcial');
+                    $element.find('.notificacion.incorrecto').html('<img src="' + settings.image_path + 'partial-icon.png"/>' + state.texto);
+                    $element.find('.elticket').html('<img src="' + settings.image_path + 'partial-icon.png"/>');
+                } else if (state.intentos > 0) {
+                    $element.find('.notificacion').html('');
+                    $element.find('.notificacion').removeClass('lineaarriba correcto dontshowcorrectness parcial');
+                    $element.find('.notificacion').addClass('incorrecto lineaarriba');
+                    $element.find('.notificacion.incorrecto').html('<img src="' + settings.image_path + 'incorrect-icon.png"/>' + state.texto);
+                    $element.find('.elticket').html('<img src="' + settings.image_path + 'incorrect-icon.png"/>');
+                }
+            } else if (state.intentos > 0) {
+                $element.find('.notificacion').html('');
+                $element.find('.notificacion').removeClass('lineaarriba correcto incorrecto parcial');
+                $element.find('.notificacion').addClass('dontshowcorrectness lineaarriba');
+                $element.find('.notificacion.dontshowcorrectness').html('<span class="icon fa fa-info-circle" aria-hidden="true"></span>Respuesta enviada.');
+            }
+        } else {
+            console.log("No cached state found for VOF XBlock:", xblockId);
+        }
+        
+        var vofid = "vof_" + settings.location;
+        renderMathForSpecificElements(vofid);
+    });
+
     botonesVoF.click(function(eventObject) {
         if(statusDiv.hasClass("unanswered") && !settings.is_past_due){
             buttonCheck.attr("disabled", false);
@@ -155,7 +288,9 @@ function VoFXBlock(runtime, element, settings) {
             };
             resps.push(resp);
           });
-          //console.log(resps);
+          
+        console.log('Submitting answers for VOF XBlock:', xblockId, resps);
+        
         $.ajax({
             type: "POST",
             url: handlerUrl,
@@ -168,7 +303,6 @@ function VoFXBlock(runtime, element, settings) {
             });
         }
     });
-
 
     function clickVerRespuesta(){
         buttonVerRespuesta = $element.find('.ver_respuesta');
@@ -197,20 +331,12 @@ function VoFXBlock(runtime, element, settings) {
         }
       });
 
-    $(function ($) {
-        console.log("Vof Actualiza");
-
-        var vofid = "vof_" + settings.location;
-        //console.log(vofid);
-        renderMathForSpecificElements(vofid);
-    });
-
     function renderMathForSpecificElements(id) {
         //console.log("Render mathjax in " + id)
         if (typeof MathJax !== "undefined") {
             var $vof = $('#' + id);
             if ($vof.length) {
-                $vof.find('.dtcell1','dtcell2','dtcell3','dtcell4').each(function (index, vofelem) {
+                $vof.find('.dtcell1, .dtcell2, .dtcell3, .dtcell4').each(function (index, vofelem) {
                     //console.log("encontrado "+ vofelem )
                     MathJax.Hub.Queue(["Typeset", MathJax.Hub, vofelem]);
                 });
@@ -218,20 +344,5 @@ function VoFXBlock(runtime, element, settings) {
         } else {
             console.warn("MathJax no está cargado.");
         }
-    }
-}
-
-function renderMathForSpecificElements(id) {
-    //console.log("Render mathjax in " + id)
-    if (typeof MathJax !== "undefined") {
-        var $vof = $('#' + id);
-        if ($vof.length) {
-            $vof.find('.dtcell1, .dtcell2, .dtcell3, .dtcell4').each(function (index, vofelem) {
-                //console.log("encontrado "+ vofelem )
-                MathJax.Hub.Queue(["Typeset", MathJax.Hub, vofelem]);
-            });
-        }
-    } else {
-        console.warn("MathJax no está cargado.");
     }
 }

@@ -25,7 +25,7 @@ def package_data(pkg, roots):
 
 setup(
     name='vof-xblock',
-    version='1.0.0',
+    version='1.0.1',
     description='XBlock table with true/false questions',
     license='AGPL v3',
     packages=[
