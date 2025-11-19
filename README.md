@@ -1,6 +1,6 @@
 # EOL VoF XBlock
 
-![https://github.com/eol-uchile/eol-vof-xblock/actions](https://github.com/eol-uchile/eol-vof-xblock/workflows/Python%20application/badge.svg)
+![https://github.com/eol-uchile/eol-vof-xblock/actions](https://github.com/eol-uchile/eol-vof-xblock/workflows/Python%20application/badge.svg) ![Coverage Status](/coverage-badge.svg)
 
 XBlock to display "Suma y Sigue" and "Media" True or False (VoF) Questions in the [CMM Edu Formación](https://cmmeduformacion.uchile.cl) Open edX LMS. Editable within Open edx Studio.
 
